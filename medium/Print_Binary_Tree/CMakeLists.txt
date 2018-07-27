@@ -9,7 +9,7 @@ add_definitions(
 )
 
 set(print_binary_tree_SOURCES
-  ${PROJECT_SOURCE_DIR}/main.cpp
+  ${PROJECT_SOURCE_DIR}/leetcode_version.cpp
 )
 
 include_directories(

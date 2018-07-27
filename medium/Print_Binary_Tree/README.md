@@ -9,5 +9,5 @@
 ## test:
 
 ```bash
-./output/print_binray_tree --tree1_preorder=1,2,4,5,3 --tree1_inorder=4,2,5,1,3 
+./output/print_binary_tree --tree1_preorder=1,2,4,5,3 --tree1_inorder=4,2,5,1,3 
 ```
