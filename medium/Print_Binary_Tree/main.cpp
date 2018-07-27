@@ -81,25 +81,8 @@ void bfsTree(TreeNode* root) {
 } 
 
 int getHeight(TreeNode* root) {
-  int height = 0;
-  queue<TreeNode*> *my_queue = new queue<TreeNode*>();
-  my_queue->push(root);
-  while (!my_queue->empty()) {
-    TreeNode *node = my_queue->front();
-    my_queue->pop();
-    if (nullptr != node->left) {
-      my_queue->push(node->left);
-    } 
-    if (nullptr != node->right) {
-       my_queue->push(node->right);
-    }
-    if (nullptr != node->left && nullptr != node->right) {
-       height = height - 1;
-    }
-    height = height + 1;
-  }
-  delete my_queue;
-  return height;
+  if(nullptr == root) return 0;
+  return max(getHeight(root->left),getHeight(root->right)) + 1;
 }
 
 vector<vector<string> > printTree(TreeNode *root) {
