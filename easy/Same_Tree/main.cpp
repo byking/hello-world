@@ -47,7 +47,7 @@ TreeNode *buildTreeByPreIn(const vector<string> *preorder, int pre_begin, int pr
   root->left = buildTreeByPreIn(preorder, pre_begin + 1, pre_begin + left_size + 1, 
 		                inorder, in_begin, in_begin + left_size);
   root->right = buildTreeByPreIn(preorder, pre_begin + left_size + 1, pre_end, 
-		                 inorder, left_size + 1, in_end);
+		                 inorder, in_begin + left_size + 1, in_end);
   return root;
 }
 
