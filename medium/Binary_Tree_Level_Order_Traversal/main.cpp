@@ -112,6 +112,37 @@ vector<vector<int>> levelTransTree(TreeNode *root) {
   return res;
 }
 
+int getHeightOfTree(TreeNode* root) {
+  if (nullptr == root) return 0;
+  return max(getHeightOfTree(root->left), getHeightOfTree(root->right)) + 1;
+}
+
+vector<vector<int>> levelTransTreeII(TreeNode* root) {
+  vector<vector<int>> res;
+  if (nullptr == root) return res;
+  int height = getHeightOfTree(root);
+  for(int i = 0; i < height; i++) {
+    res.push_back(vector<int>());
+  }
+  queue<Node> *my_queue = new queue<Node>();
+  Node node = Node{0, root};
+  my_queue->push(node);
+  while (!my_queue->empty()) {
+    Node node = my_queue->front();
+    my_queue->pop();
+    int level = node.level;
+    int index = height - level - 1;
+    res[index].push_back(node.tree_node->val); 
+    if (nullptr != node.tree_node->left) {
+      my_queue->push(Node{level+1, node.tree_node->left});    
+    }  
+    if (nullptr != node.tree_node->right) {
+      my_queue->push(Node{level+1, node.tree_node->right}); 
+    }
+  }
+  return res;   
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -131,6 +162,16 @@ int main(int argc, char* argv[]) {
     }
     cout << endl;
   }
+
+  cout << endl;
+
+  vector<vector<int>> resII = levelTransTreeII(tree1_root);
+  for (vector<vector<int>>::iterator itr = resII.begin(); itr != resII.end(); itr++) {
+    for (vector<int>::iterator it = (*itr).begin(); it != (*itr).end(); it++) {
+      cout << *it << ";";
+    }
+    cout << endl;
+  } 
 
   return 0;
 }
