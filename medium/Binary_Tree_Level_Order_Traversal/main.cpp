@@ -99,9 +99,6 @@ vector<vector<int>> levelTransTree(TreeNode *root) {
       res.push_back(vector<int>());
     }
     res[level].push_back(node.tree_node->val);
-    if (nullptr != node.tree_node->left || nullptr != node.tree_node->right) {
-      level = level + 1;
-    }
     if (nullptr != node.tree_node->left) {
       node_queue->push(Node{node.level+1, node.tree_node->left});
     }    
@@ -143,6 +140,21 @@ vector<vector<int>> levelTransTreeII(TreeNode* root) {
   return res;   
 }
 
+vector<double> averageOfLevels(TreeNode *root) {
+  vector<double> res;
+  vector<vector<int>> val_list = levelTransTree(root); 
+  for(vector<vector<int>>::iterator itr = val_list.begin(); itr != val_list.end(); itr++) {
+    double sum = 0;
+    int size = 0;
+    for (vector<int>::iterator it = (*itr).begin(); it != (*itr).end(); it++) {
+      sum += *it;
+      size ++;
+    }
+    res.push_back(sum/size);
+  }
+  return res;
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -172,6 +184,14 @@ int main(int argc, char* argv[]) {
     }
     cout << endl;
   } 
+
+  cout << endl;
+
+  vector<double> levelSum = averageOfLevels(tree1_root);
+  for(vector<double>::iterator it = levelSum.begin(); it != levelSum.end(); it++) {
+    cout << *it << endl;;
+  }
+  cout << endl;
 
   return 0;
 }
