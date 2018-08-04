@@ -98,6 +98,26 @@ TreeNode* invertTree(TreeNode* root) {
   return root;
 }
 
+TreeNode* invertTree1(TreeNode* root) {
+  if (nullptr == root) return NULL;
+  queue<TreeNode*> *node_queue = new queue<TreeNode*>();
+  node_queue->push(root);
+  while (!node_queue->empty()) {
+    TreeNode* node = node_queue->front();
+    node_queue->pop();
+    TreeNode* tmp = node->left;
+    node->left = node->right;
+    node->right = tmp;
+    if (nullptr != node->left ) {
+      node_queue->push(node->left);
+    }
+    if (nullptr != node->right) {
+      node_queue->push(node->right);
+    }
+   }
+  return root;
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -116,5 +136,8 @@ int main(int argc, char* argv[]) {
   TreeNode *tree2_root = invertTree(tree1_root);
   bfsTree(tree2_root); 
 
+  cout << "invert tree: " << endl;
+  TreeNode *tree3_root = invertTree1(tree2_root);
+  bfsTree(tree3_root);
   return 0;
 }
