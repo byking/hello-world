@@ -89,6 +89,15 @@ bool isSymmetric(TreeNode* root) {
   return isMirror(root, root);
 }
 
+TreeNode* invertTree(TreeNode* root) {
+  if (nullptr == root) return NULL;
+  TreeNode* left = invertTree(root->left);
+  TreeNode* right = invertTree(root->right);
+  root->left = right;
+  root->right = left;
+  return root;
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -99,9 +108,13 @@ int main(int argc, char* argv[]) {
 
   TreeNode *tree1_root = buildTreeByPreIn(&tree1_preorder_vec, &tree1_inorder_vec);
 
-
+  bfsTree(tree1_root);
 
   cout << "tree is symmetric: " << isSymmetric(tree1_root) << endl;
+
+  cout << "invert tree: " << endl;
+  TreeNode *tree2_root = invertTree(tree1_root);
+  bfsTree(tree2_root); 
 
   return 0;
 }
