@@ -96,6 +96,33 @@ void preorder_traversal(TreeNode* root) {
   }  
 }
 
+void getLeaves(TreeNode* root, vector<int>& leaves) {
+  if (nullptr == root) return;
+  stack<TreeNode*> node_stack;
+  node_stack.push(root);
+  while (!node_stack.empty()) {
+    TreeNode* node = node_stack.top();
+    node_stack.pop();
+    if (nullptr == node->right && nullptr == node->left) {
+      leaves.push_back(node->val);
+    }
+    if (nullptr != node->right) {
+      node_stack.push(node->right);
+    }
+    if (nullptr != node->left) {
+      node_stack.push(node->left);
+    }
+  }
+}
+
+bool leafSimilar(TreeNode* root1, TreeNode* root2) {
+  vector<int> leaves1;
+  vector<int> leaves2;
+  getLeaves(root1, leaves1);
+  getLeaves(root2, leaves2);
+  return leaves1 == leaves2;
+}
+
 void flatten(TreeNode* root) {
   if (nullptr == root) return;
   stack<TreeNode*> node_stack;
@@ -133,6 +160,8 @@ int main(int argc, char* argv[]) {
   preorder_traversal(tree1_root);
   cout << endl;
 
+  cout << "leafSimilar: " << leafSimilar(tree1_root, tree1_root) << endl;
+
   flatten(tree1_root);
   TreeNode node = *tree1_root;
   while (nullptr != node.right) {
@@ -140,5 +169,6 @@ int main(int argc, char* argv[]) {
     node = *node.right;
   }
   cout << node.val << ";" << endl;
+
   return 0;
 }
