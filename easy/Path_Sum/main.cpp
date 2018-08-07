@@ -94,6 +94,25 @@ bool hasPathSum(TreeNode* root, int sum) {
   return calcPathSum(root, sum, cur_sum);
 }
 
+void dfsTraversal(TreeNode* root, int sum, int cur_sum, vector<int>& path_res, vector<vector<int>>& res) {
+  if (nullptr == root) return;
+  cur_sum += root->val;
+  path_res.push_back(root->val);
+  if (cur_sum == sum && nullptr == root->left && nullptr == root->right) {
+    res.push_back(path_res);
+  }
+  dfsTraversal(root->left, sum, cur_sum, path_res, res);
+  dfsTraversal(root->right, sum, cur_sum, path_res, res);
+  path_res.pop_back();
+}
+
+vector<vector<int>> pathSum(TreeNode* root, int sum) {
+  vector<vector<int>> res;
+  vector<int> path_res;
+  dfsTraversal(root, sum, 0, path_res, res);
+  return res;
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -107,5 +126,15 @@ int main(int argc, char* argv[]) {
   bfsTree(tree1_root);
 
   cout << "has sum 22: " << hasPathSum(tree1_root, 22);
+  cout << endl;
+  cout << "get path sum nodes: ";
+  vector<vector<int>> res = pathSum(tree1_root, 22);
+  for(vector<vector<int>>::iterator it = res.begin(); it != res.end(); it++) {
+    for(vector<int>::iterator i = (*it).begin(); i != (*it).end(); i++) {
+      cout << *i << ";";
+    }
+    cout << endl;
+  }
+
   return 0;
 }
