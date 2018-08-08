@@ -113,6 +113,29 @@ vector<vector<int>> pathSum(TreeNode* root, int sum) {
   return res;
 }
 
+void dfsTraversalTree(TreeNode* root, vector<string>& paths, string& path) {
+  if (nullptr == root) return;
+  string old_path = path;
+  if (path.empty()) {
+    path = to_string(root->val);
+  }else {
+    path = path + "->" + to_string(root->val);
+  }
+  if (nullptr == root->left && nullptr == root->right) {
+    paths.push_back(path);
+  }
+  dfsTraversalTree(root->left, paths, path); 
+  dfsTraversalTree(root->right, paths, path);
+  path = old_path; 
+}
+
+vector<string> binaryTreePaths(TreeNode* root) {
+  vector<string> paths;
+  string path = "";
+  dfsTraversalTree(root, paths, path); 
+  return paths;
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -134,6 +157,12 @@ int main(int argc, char* argv[]) {
       cout << *i << ";";
     }
     cout << endl;
+  }
+
+  cout << "get paths of tree:" << endl;
+  vector<string> paths = binaryTreePaths(tree1_root);
+  for (vector<string>::iterator it = paths.begin(); it != paths.end(); it++) {
+    cout << *it << endl;
   }
 
   return 0;
