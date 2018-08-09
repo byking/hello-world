@@ -136,6 +136,28 @@ vector<string> binaryTreePaths(TreeNode* root) {
   return paths;
 }
 
+int equalSumPathCount = 0;
+
+void dfsCheckTree(TreeNode* root, int sum, int cur_sum) {
+  if (nullptr == root) return;
+  cur_sum += root->val;
+  if (cur_sum == sum) {
+    equalSumPathCount++;
+  }
+  dfsCheckTree(root->left, sum, cur_sum);
+  dfsCheckTree(root->right, sum, cur_sum);
+}
+
+int pathSumNotOnlyFromRoot(TreeNode* root, int sum) {
+  int cur_sum = 0;
+  if (nullptr == root) return 0; 
+  
+  dfsCheckTree(root, sum, cur_sum);
+  pathSumNotOnlyFromRoot(root->left, sum);
+  pathSumNotOnlyFromRoot(root->right, sum); 
+  return equalSumPathCount;
+}
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -165,5 +187,8 @@ int main(int argc, char* argv[]) {
     cout << *it << endl;
   }
 
+  cout << "path node equal sum(not only from root or end at leaf): ";
+  cout << pathSumNotOnlyFromRoot(tree1_root, 8); 
+  cout << endl;
   return 0;
 }
