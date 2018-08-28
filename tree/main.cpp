@@ -153,6 +153,55 @@ TreeNode* deserialize(string data) {
 }
 /***Serialize and Deserialize BST END***/
 
+/**********************************************
+ * Unique Binary Search Trees II 
+ * given N, generate all unique BST less than n
+ * input: 3, output: [
+ *                    [1,null,3,2],
+ *                    [3,2,null,1],
+ *                    [3,1,null,null,2],
+ *                    [2,1,3],
+ *                    [1,null,2,null,3]
+ *                   ]
+ * for every item i, make a recursive call and 
+ * get a list of possible values for the left
+ * node in range [start,i-1], Since is a BST,
+ * right from [i+1, end]  
+ **********************************************/
+vector<TreeNode*> generateTreeRecursive(int start, int end) {
+  vector<TreeNode*> res;
+  if (end < start) {
+    res.emplace_back(nullptr);
+    return res;
+  }
+  if (end == start) {
+    res.emplace_back(new TreeNode(start));
+    return res;
+  }
+
+  for (int i = start; i <= end; ++i) {
+    vector<TreeNode*> left = generateTreeRecursive(start, i-1);
+    vector<TreeNode*> right = generateTreeRecursive(i+1, end);
+    for(int j = 0; j < (int)left.size(); j++) {
+      for(int k=0; k < (int)right.size(); ++k) {
+        TreeNode* node = new TreeNode(i);
+	node->left = left[j];
+	node->right = right[k];
+	res.emplace_back(node);
+      }
+    }
+  }
+  return res;
+}
+
+vector<TreeNode*> generateTrees(int n) {
+  if (0 == n) {
+    return vector<TreeNode*> ();
+  }
+  return generateTreeRecursive(1, n);
+}
+
+
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
@@ -163,12 +212,22 @@ int main(int argc, char* argv[]) {
 
   TreeNode *tree1_root = buildTreeByPreIn(&tree1_preorder_vec, &tree1_inorder_vec);
 
-  //Serialize and Deserialize BST
+  cout << endl << "***Serialize and Deserialize BST***" << endl;
   bfsTree(tree1_root);
   string s = serialize(tree1_root);
   cout << "serialize BST use preorder traversal: " << s << endl;
   TreeNode* deserialize_tree = deserialize(s);
   cout << "deserialize BST: " << endl;
   bfsTree(deserialize_tree);
+  cout << "***Serialize and Deserialize BST***" << endl;
+
+  cout << endl << "***unique Binary Search Trees II***" << endl; 
+  vector<TreeNode*> trees = generateTrees(3);
+  for(int i = 0; i < (int)trees.size(); i++ ) {
+    TreeNode* root = trees.at(i);
+    bfsTree(root);
+  }
+  cout << "***unique Binary Search Trees II***" << endl; 
+
   return 0;
 }
