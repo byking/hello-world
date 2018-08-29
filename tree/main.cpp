@@ -203,7 +203,8 @@ vector<TreeNode*> generateTrees(int n) {
 
 /**********************************************
  * Unique Binary Search Trees
- *    
+ * dynamic programming
+ *
  *********************************************/
 int numTrees(int n) {
 
