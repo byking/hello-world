@@ -166,7 +166,8 @@ TreeNode* deserialize(string data) {
  * for every item i, make a recursive call and 
  * get a list of possible values for the left
  * node in range [start,i-1], Since is a BST,
- * right from [i+1, end]  
+ * right from [i+1, end]. The result is unique,
+ * since they have unique roots.  
  **********************************************/
 vector<TreeNode*> generateTreeRecursive(int start, int end) {
   vector<TreeNode*> res;
@@ -201,13 +202,29 @@ vector<TreeNode*> generateTrees(int n) {
   return generateTreeRecursive(1, n);
 }
 
-/**********************************************
+/***********************************************
  * Unique Binary Search Trees
- * dynamic programming
- *
- *********************************************/
+ * dynamic programming:
+ * G(n): the number of unique BST for a sequence
+ * of length n.
+ * F(i, n), 1<=i<=n: the number of unique BST,
+ * where the number i is the root of BST, and 
+ * the sequence ranges from 1 to n.
+ * G(n) = F(1,n) + f(2,n) + ... + f(n,n)
+ * G(0) = 0, G(1) = 1.
+ * F(i,n) = G(i-1) * G(n-i)  1<=i<=n 
+ ***********************************************/
 int numTrees(int n) {
-
+  vector<int> res(n+1, 0);
+  res.at(0) = 1;  //G(0)
+  res.at(1) = 1;  //G(1)
+    
+  for(int i = 2; i <= n; i++) {
+    for(int j = 1; j <= i; j++) {
+      res.at(i) += res.at(i-1) * res.at(i-j);  
+    }
+  }
+  return res.at(n);
 }
 
 
@@ -230,15 +247,17 @@ int main(int argc, char* argv[]) {
   bfsTree(deserialize_tree);
   cout << "***Serialize and Deserialize BST***" << endl;
 
+
   cout << endl << "***unique Binary Search Trees II***" << endl; 
   vector<TreeNode*> trees = generateTrees(3);
   for(int i = 0; i < (int)trees.size(); i++ ) {
     TreeNode* root = trees.at(i);
     bfsTree(root);
   }
-  cout << "***unique Binary Search Trees II***" << endl; 
+  
 
-
+  cout << "***unique Binary Search Trees***" << endl; 
+  cout << "unique BST num is " << numTrees(3) << " when sequence length is 3.";
   cout << endl << "***unique Binary Search Trees ***" << endl; 
   cout << "***unique Binary Search Trees***" << endl; 
   
