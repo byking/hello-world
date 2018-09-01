@@ -323,7 +323,7 @@ int main(int argc, char* argv[]) {
   }
   
 
-  cout << "***unique Binary Search Trees***" << endl; 
+  cout << endl << "***unique Binary Search Trees***" << endl; 
   cout << "unique BST num is " << numTrees(3) << " when sequence length is 3.";
   cout << endl << "***unique Binary Search Trees ***" << endl; 
   cout << "***unique Binary Search Trees***" << endl; 
