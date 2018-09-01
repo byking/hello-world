@@ -2,6 +2,7 @@
 #include <gflags/gflags.h>
 #include <queue>
 #include <stack>
+#include <deque>
 
 DEFINE_string(tree1_preorder, "", "tree 1 preorder");
 DEFINE_string(tree1_inorder, "", "tree 1 inoreder");
@@ -229,8 +230,70 @@ int numTrees(int n) {
 
 /***********************************************
  * Binary Tree Zigzag Level Order Traversal
- *
+ * use deque to record node: first, push root 
+ * to deque, while deque not null, we do:  
+ * 1.get size of deque, which record node in the 
+ *   same level
+ * 2.when level % 2 == 0, get/pop node at front,
+ *   then push back left/right of the pop node.
+ * 3.when level % 2 == 1, get/pop node at back,
+ *   then push front right/left of the pop node.
+ * 4.push all node in the same level to vector,
+ *   then push vector to result.
  ***********************************************/
+vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+  vector<vector<int>> result;
+  if (nullptr == root) {
+    return result;
+  }  
+  deque<TreeNode*> dq;
+  dq.push_back(root);
+  int level = 0;
+  while(!dq.empty()) {
+    auto level_size = dq.size();
+    vector<int> number_same_level;
+    for(auto i = 0; i < level_size; i++) {
+      if (level % 2 == 0) {
+        TreeNode* node = dq.front();
+        dq.pop_front();
+        number_same_level.push_back(node->val);
+	if (nullptr != node->left) {
+	  dq.push_back(node->left);
+	}
+	if (nullptr != node->right) {
+	  dq.push_back(node->right);
+	}
+      }else {
+        TreeNode* node = dq.back();
+	dq.pop_back();
+	number_same_level.push_back(node->val);
+	if (nullptr != node->right) {
+	  dq.push_front(node->right);
+	}
+	if (nullptr != node->left) {
+	  dq.push_front(node->left);
+	}
+      }
+    }
+    result.push_back(number_same_level);
+    level++;
+  }
+  return result;
+}
+
+
+/***********************************************
+ * print two dimensional vector
+ ***********************************************/ 
+void printTwoDimensionalVector(vector<vector<int>> vectors) {
+  for(vector<vector<int>>::iterator it = vectors.begin(); it != vectors.end(); it++) {
+    for(vector<int>::iterator i = (*it).begin(); i != (*it).end(); i++) {
+      cout << *i << ";";
+    }
+    cout << endl;
+  }
+}
+
 
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
@@ -266,8 +329,10 @@ int main(int argc, char* argv[]) {
   cout << "***unique Binary Search Trees***" << endl; 
  
   cout << "***Binary Tree Zigzag Level Order Traversal***" << endl;
-  
-  cout << "***Binary Tree Zigzag Level Order Traversal***"  << endl;
+  vector<vector<int>> zigzag_result = zigzagLevelOrder(tree1_root);
+  printTwoDimensionalVector(zigzag_result);
+  cout << "***Binary Tree Zigzag Level Order Traversal***" << endl;
+
 
   return 0;
 }
