@@ -312,7 +312,6 @@ int main(int argc, char* argv[]) {
   TreeNode* deserialize_tree = deserialize(s);
   cout << "deserialize BST: " << endl;
   bfsTree(deserialize_tree);
-  cout << "***Serialize and Deserialize BST***" << endl;
 
 
   cout << endl << "***unique Binary Search Trees II***" << endl; 
@@ -324,15 +323,11 @@ int main(int argc, char* argv[]) {
   
 
   cout << endl << "***unique Binary Search Trees***" << endl; 
-  cout << "unique BST num is " << numTrees(3) << " when sequence length is 3.";
-  cout << endl << "***unique Binary Search Trees ***" << endl; 
-  cout << "***unique Binary Search Trees***" << endl; 
+  cout << "unique BST num is " << numTrees(3) << " when sequence length is 3." << endl;
  
-  cout << "***Binary Tree Zigzag Level Order Traversal***" << endl;
+  cout << endl << "***Binary Tree Zigzag Level Order Traversal***" << endl;
   vector<vector<int>> zigzag_result = zigzagLevelOrder(tree1_root);
   printTwoDimensionalVector(zigzag_result);
-  cout << "***Binary Tree Zigzag Level Order Traversal***" << endl;
-
-
+  
   return 0;
 }
