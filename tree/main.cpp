@@ -16,49 +16,63 @@ struct TreeNode {
   TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
-vector<string> split(string str, char a) {
-  vector<string> strvec;
+vector<int> split(string str, char a) {
+  vector<int> strvec;
   string::size_type pos1, pos2;
   pos2 = str.find(a);
   pos1 = 0;
   while (string::npos != pos2) {
-    strvec.push_back(str.substr(pos1, pos2 - pos1));
+    strvec.push_back(stoi(str.substr(pos1, pos2 - pos1)));
     pos1 = pos2 + 1;
     pos2 = str.find(a, pos1);
   }
   string val = str.substr(pos1);
   if ("" != val) {
-    strvec.push_back(str.substr(pos1));
+    strvec.push_back(stoi(str.substr(pos1)));
   }
   return strvec;
 }
 
-TreeNode *buildTreeByPreIn(const vector<string> *preorder, int pre_begin, int pre_end, 
-		           const vector<string> *inorder, int in_begin, int in_end) {
-  if (pre_begin == pre_end) return NULL;
-  if (in_begin == in_end) return NULL;
+/*************************************************************
+ * Construct Binary Tree from Preorder and Inorder Traversal
+ * preorder: [root, left, right] inorder: [left, root, right]
+ * so we can find root node in inorder to get left subtree 
+ * and right subtree, and then do same operation to left/right
+ * subtree recursivelly.
+ *************************************************************/
+TreeNode* buildTreeByPreInorder(const vector<int>& preorder, int pre_start,
+				const vector<int>& inorder, int in_start, int in_end) {
+  if (in_end < in_start) {
+    return nullptr;
+  } 
 
-  TreeNode *root = new TreeNode(stoi(preorder->at(pre_begin)));
-  
-  auto left_size = find(inorder->begin() + in_begin, 
-		         inorder->begin() + in_end, 
-			 preorder->at(pre_begin)) - inorder->begin() - in_begin;
-  
-  //printf("pre_begin:%d;pre_end:%d;in_begin:%d;in_end:%d;left_size:%d\n",
-  //       pre_begin,pre_end,in_begin,in_end,left_size);
+  TreeNode* node = new TreeNode(preorder.at(pre_start));
+  int left_subtree_size = 0;
+  for(int i = in_start; i <= in_end ; i++) {
+    if (node->val == inorder.at(i)) {
+      break;
+    }
+    left_subtree_size++;
+  }
 
-  root->left = buildTreeByPreIn(preorder, pre_begin + 1, pre_begin + left_size + 1, 
-		                inorder, in_begin, in_begin + left_size);
-  root->right = buildTreeByPreIn(preorder, pre_begin + left_size + 1, pre_end, 
-		                 inorder, in_begin + left_size + 1, in_end);
-  return root;
+  node->left = buildTreeByPreInorder(preorder, pre_start + 1, 
+		  		     inorder, in_start, in_start + left_subtree_size - 1);
+  node->right = buildTreeByPreInorder(preorder, pre_start + left_subtree_size + 1,
+		  		     inorder, in_start + left_subtree_size + 1, in_end);
+  return node;
 }
 
-TreeNode *buildTreeByPreIn(const vector<string> *preorder,
-		           const vector<string> *inorder){
-  return buildTreeByPreIn(preorder, 0, preorder->size(), inorder, 0, inorder->size());
+TreeNode* buildTreeByPreInorder(const vector<int>& preorder, const vector<int>& inorder) {
+  int pre_start = 0;
+  int in_start = 0;
+  int in_end = inorder.size() - 1;
+  return buildTreeByPreInorder(preorder, pre_start, inorder, in_start, in_end); 
 }
 
+/*******************************
+ * Breadth-first traversal
+ *
+ *******************************/
 void bfsTree(TreeNode* root) {
   cout << "bfsTree: ";
   if (nullptr == root) {
@@ -119,12 +133,12 @@ string serialize(TreeNode* root) {
   return res; 
 }
 
-TreeNode* deserialize(vector<string>& node_value_list, int begin, int end) {
+TreeNode* deserialize(vector<int>& node_value_list, int begin, int end) {
   if (end < 0 || begin > end) {
     return nullptr;
   }
  
-  int cur_val = stoi(node_value_list.at(begin));
+  int cur_val = node_value_list.at(begin);
   TreeNode* node = new TreeNode(cur_val);
   
   if (begin == end) {
@@ -134,7 +148,7 @@ TreeNode* deserialize(vector<string>& node_value_list, int begin, int end) {
   int pivot_index = begin + 1;
   int pivot;
   for (int i = begin + 1; i <= end; i++) {
-    pivot = stoi(node_value_list.at(i));
+    pivot = node_value_list.at(i);
     if (pivot <= cur_val) {
       pivot_index ++;
     }else {
@@ -149,10 +163,9 @@ TreeNode* deserialize(vector<string>& node_value_list, int begin, int end) {
 }
 
 TreeNode* deserialize(string data) {
-  vector<string> node_value_list = split(data, ',');
+  vector<int> node_value_list = split(data, ',');
   return deserialize(node_value_list, 0, node_value_list.size() - 1); 
 }
-/***Serialize and Deserialize BST END***/
 
 /**********************************************
  * Unique Binary Search Trees II 
@@ -250,9 +263,9 @@ vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
   dq.push_back(root);
   int level = 0;
   while(!dq.empty()) {
-    auto level_size = dq.size();
+    int level_size = dq.size();
     vector<int> number_same_level;
-    for(auto i = 0; i < level_size; i++) {
+    for(int i = 0; i < level_size; i++) {
       if (level % 2 == 0) {
         TreeNode* node = dq.front();
         dq.pop_front();
@@ -281,7 +294,6 @@ vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
   return result;
 }
 
-
 /***********************************************
  * print two dimensional vector
  ***********************************************/ 
@@ -294,19 +306,20 @@ void printTwoDimensionalVector(vector<vector<int>> vectors) {
   }
 }
 
-
 int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
   cout << "get tree1 inorder:  " << FLAGS_tree1_inorder << endl;
 
-  vector<string> tree1_preorder_vec = split(FLAGS_tree1_preorder, ',');  
-  vector<string> tree1_inorder_vec = split(FLAGS_tree1_inorder, ',');  
+  vector<int> tree1_preorder_vec = split(FLAGS_tree1_preorder, ',');  
+  vector<int> tree1_inorder_vec = split(FLAGS_tree1_inorder, ',');  
 
-  TreeNode *tree1_root = buildTreeByPreIn(&tree1_preorder_vec, &tree1_inorder_vec);
+  /***Construct Binary Tree from Preorder and Inorder Traversal***/
+  TreeNode *tree1_root = buildTreeByPreInorder(tree1_preorder_vec, tree1_inorder_vec);
+  cout << "***buildTreeByPreInorder***" << endl;
+  bfsTree(tree1_root);
 
   cout << endl << "***Serialize and Deserialize BST***" << endl;
-  bfsTree(tree1_root);
   string s = serialize(tree1_root);
   cout << "serialize BST use preorder traversal: " << s << endl;
   TreeNode* deserialize_tree = deserialize(s);
@@ -321,7 +334,6 @@ int main(int argc, char* argv[]) {
     bfsTree(root);
   }
   
-
   cout << endl << "***unique Binary Search Trees***" << endl; 
   cout << "unique BST num is " << numTrees(3) << " when sequence length is 3." << endl;
  
