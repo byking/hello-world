@@ -12,5 +12,5 @@
 ```bash
 ./output/test_tree --tree1_preorder=1,2,3,4,2,4,3 --tree1_inorder=3,2,4,1,4,2,3
 BST:
-./output/test_tree --tree1_preorder=2,1,0,3,4  --tree1_inorder=1,0,2,3,4
+./output/test_tree --tree1_preorder=2,1,0,3,4  --tree1_inorder=1,0,2,3,4 --tree1_postorder=0,1,4,3,2
 ```

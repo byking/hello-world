@@ -5,7 +5,8 @@
 #include <deque>
 
 DEFINE_string(tree1_preorder, "", "tree 1 preorder");
-DEFINE_string(tree1_inorder, "", "tree 1 inoreder");
+DEFINE_string(tree1_inorder, "", "tree 1 inorder");
+DEFINE_string(tree1_postorder, "", "tree 1 postorder");
 
 using namespace std;
 
@@ -69,9 +70,45 @@ TreeNode* buildTreeByPreInorder(const vector<int>& preorder, const vector<int>& 
   return buildTreeByPreInorder(preorder, pre_start, inorder, in_start, in_end); 
 }
 
+
+/************************************************************
+ * Construct Binary Tree from Inorder and Postorder Traversal
+ * inorder: left, root, right; postorder: left, right, root
+ * so we can get root node when end to begin traversal post-
+ * order, and in inorder we can get left subtree and right
+ * subtree.
+ ************************************************************/
+TreeNode* buildTreeByInPostorder(const vector<int>& inorder, int in_start, int in_end,
+				 const vector<int>& postorder, int post_start) {
+  if (in_end < in_start) {
+    return nullptr;
+  }   
+
+  TreeNode* node = new TreeNode(postorder.at(post_start));
+  int right_subtree_size = 0;
+  for (int i = in_end; i >= in_start; i--) {
+    if (node->val == inorder.at(i)) {
+      break;
+    }
+    right_subtree_size++;
+  }
+  node->left = buildTreeByInPostorder(inorder, in_start, in_end - right_subtree_size - 1,
+		  		      postorder, post_start - right_subtree_size - 1);
+  node->right = buildTreeByInPostorder(inorder, in_end - right_subtree_size + 1, in_end,
+		  		       postorder, post_start - 1);
+
+  return node;
+}
+
+TreeNode* buildTreeByInPostorder(const vector<int>& inorder, const vector<int>& postorder) {
+  int in_start = 0;
+  int in_end = inorder.size() - 1;
+  int post_start = postorder.size() - 1;
+  return buildTreeByInPostorder(inorder, in_start, in_end, postorder, post_start);
+}
+
 /*******************************
  * Breadth-first traversal
- *
  *******************************/
 void bfsTree(TreeNode* root) {
   cout << "bfsTree: ";
@@ -310,14 +347,22 @@ int main(int argc, char* argv[]) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   cout << "get tree1 preorder: " << FLAGS_tree1_preorder << endl;
   cout << "get tree1 inorder:  " << FLAGS_tree1_inorder << endl;
+  cout << "get tree1 postorder:  " << FLAGS_tree1_postorder << endl;
 
   vector<int> tree1_preorder_vec = split(FLAGS_tree1_preorder, ',');  
   vector<int> tree1_inorder_vec = split(FLAGS_tree1_inorder, ',');  
+  vector<int> tree1_postorder_vec = split(FLAGS_tree1_postorder, ',');  
 
   /***Construct Binary Tree from Preorder and Inorder Traversal***/
   TreeNode *tree1_root = buildTreeByPreInorder(tree1_preorder_vec, tree1_inorder_vec);
   cout << "***buildTreeByPreInorder***" << endl;
   bfsTree(tree1_root);
+  
+  /***Construct Binary Tree from Inorder and Postorder Traversal***/
+  TreeNode *tree1_root_post = buildTreeByInPostorder(tree1_inorder_vec, tree1_postorder_vec);
+  cout << endl << "***buildTreeByInPostorder***" << endl;
+  bfsTree(tree1_root_post);
+  
 
   cout << endl << "***Serialize and Deserialize BST***" << endl;
   string s = serialize(tree1_root);
