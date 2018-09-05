@@ -17,6 +17,46 @@ struct TreeNode {
   TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
+struct TreeLinkNode {
+  TreeLinkNode* left;
+  TreeLinkNode* right;
+  TreeLinkNode* next;
+};
+
+/************************************************
+ * Populating Next Right Pointers in Each Node II
+ *   1           1->NULL
+ *  2 3   ==>   2->3->NULL
+ * 4 5 7      4->5->7->NULL
+ * similar to BFS of tree, process level by level
+ ************************************************/
+void connect(TreeLinkNode* root) {
+  if (nullptr == root) {
+    return;
+  }
+  queue<TreeLinkNode*> q;
+  q.push(root);
+  while(!q.empty()) {
+    int level_size = q.size();
+    for(int i = 0; i < level_size; i++) {
+      TreeLinkNode* node = q.front();
+      q.pop();
+      if(nullptr != node->left) {
+        q.push(node->left);
+      }
+      if(nullptr != node->right) {
+        q.push(node->right);
+      }
+      if(i != level_size - 1) {
+        node->next = q.front();
+      }else {
+        node->next = nullptr;
+      }
+    }
+  }  
+}
+
+
 vector<int> split(string str, char a) {
   vector<int> strvec;
   string::size_type pos1, pos2;
