@@ -23,6 +23,49 @@ struct TreeLinkNode {
   TreeLinkNode* next;
 };
 
+/*********************************
+ * Binary Tree Preorder Traversal
+ *  1   
+ * 2 3 ==> 1,2,3 (root,left,right)
+ * first is recusive version
+ * second is not 
+ *********************************/
+void recursivePreorderTraversal(TreeNode* root, vector<int>& res) {
+  if (nullptr == root) {
+    return;
+  }
+  res.push_back(root->val);
+  recursivePreorderTraversal(root->left, res);
+  recursivePreorderTraversal(root->right, res);
+}
+
+vector<int> preorderTraversal(TreeNode* root) {
+  vector<int> res;
+  recursivePreorderTraversal(root, res);
+  return res;
+}
+
+vector<int> preorderTraversalII(TreeNode* root) {
+  vector<int> res;
+  stack<TreeNode*> st;
+  if (nullptr == root) {
+    return res;
+  }
+  st.push(root);
+  while (!st.empty()) {
+    TreeNode* node = st.top();
+    st.pop();
+    res.push(node->val);
+    if (nullptr != node->right) {
+      st.push(node->right);
+    }
+    if (nullptr != node->left) {
+      st.push(node->left);
+    }
+  }
+  return res;
+}
+
 /************************************************
  * Populating Next Right Pointers in Each Node II
  *   1           1->NULL
@@ -55,7 +98,6 @@ void connect(TreeLinkNode* root) {
     }
   }  
 }
-
 
 vector<int> split(string str, char a) {
   vector<int> strvec;
