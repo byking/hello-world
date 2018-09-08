@@ -55,7 +55,7 @@ vector<int> preorderTraversalII(TreeNode* root) {
   while (!st.empty()) {
     TreeNode* node = st.top();
     st.pop();
-    res.push(node->val);
+    res.push_back(node->val);
     if (nullptr != node->right) {
       st.push(node->right);
     }
@@ -65,6 +65,38 @@ vector<int> preorderTraversalII(TreeNode* root) {
   }
   return res;
 }
+
+/***********************************
+ * Binary Tree InOrder Traversal
+ *  1
+ * 2 3 ==> 2,1,3(left, root, right)
+ ***********************************/
+vector<int> inorderTraversal(TreeNode* root) {
+  vector<int> res;
+  stack<TreeNode*> st;
+  
+  TreeNode* node = root;
+  while (nullptr != node) {
+    st.push(node);
+    node = node->left;
+  }
+  while (!st.empty()) {
+    TreeNode* cur_node = st.top();
+    st.pop();
+    res.push_back(cur_node->val);
+    TreeNode* cur_root = cur_node->right;
+    if (nullptr != cur_root) {
+      st.push(cur_root);
+      TreeNode* left_node = cur_root->left;
+      while(nullptr != left_node) {
+        st.push(left_node);
+	left_node = left_node->left;
+      }
+    }
+  }
+  return res;
+}
+
 
 /************************************************
  * Populating Next Right Pointers in Each Node II
