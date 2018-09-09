@@ -97,6 +97,39 @@ vector<int> inorderTraversal(TreeNode* root) {
   return res;
 }
 
+/***********************************
+ * Binary Tree PostOrder Traversal
+ *  1
+ * 2 3 ==> 2,3,1(left, right, root)
+ * use two stack, for output stack
+ * we want output left,right,root,
+ * so in input stack, the sequence
+ * is left, right.
+ ***********************************/
+vector<int> postorderTraversal(TreeNode* root) {
+  stack<TreeNode*> in, out;
+  vector<int> res;
+  if (nullptr != root) {
+    in.push(root);
+  }
+  while(!in.empty()) {
+    TreeNode* node = in.top();
+    in.pop();
+    out.push(node);
+    if (nullptr != node->left) {
+      in.push(node->left);
+    }
+    if (nullptr != node->right) {
+      in.push(node->right);
+    }
+  }
+  while(!out.empty()) {
+    TreeNode* node = out.top();
+    out.pop();
+    res.emplace_back(node->val);
+  }
+  return res;
+}
 
 /************************************************
  * Populating Next Right Pointers in Each Node II
