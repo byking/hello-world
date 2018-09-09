@@ -131,6 +131,39 @@ vector<int> postorderTraversal(TreeNode* root) {
   return res;
 }
 
+/*************************************
+ * Binary Tree Right Side View
+ *   1
+ *  2 3   ==>  1,3,4
+ *   5 4 
+ * like level traversal tree, in same
+ * level only get the last node
+ *************************************/
+vector<int> rightSideView(TreeNode* root) {
+  queue<TreeNode*> q;
+  vector<int> res;
+  if (nullptr != root) {
+    q.push(root);
+  }
+  while (!q.empty()) {
+    int q_size = q.size();
+    for (int i = 0; i < q_size; i++) {
+      TreeNode* node = q.front();
+      q.pop();
+      if (i == (q_size - 1)) {
+        res.emplace_back(node->val);
+      } 
+      if (nullptr != node->left) {
+        q.push(node->left);
+      }
+      if (nullptr != node->right) {
+      	q.push(node->right);
+      }
+    }
+  }
+  return res;
+}
+
 /************************************************
  * Populating Next Right Pointers in Each Node II
  *   1           1->NULL
