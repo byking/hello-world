@@ -165,7 +165,29 @@ vector<int> rightSideView(TreeNode* root) {
 }
 
 /**************************************
- *************************************/
+ * Count Complete Tree Nodes
+ **************************************/
+int countNodes(TreeNode* root) {
+  if (nullptr == root) {
+    return 0;
+  }
+  TreeNode* left_node = root;
+  int l = 0;
+  while (nullptr != left_node) {
+    left_node = left_node->left;
+    l++;
+  }
+  int r = 0;
+  TreeNode* right_node = root;
+  while (nullptr != right_node) {
+    right_node = right_node->right;
+    r++;
+  }
+  if (r == l) {
+    return (1 << l) - 1;
+  }
+  return 1 + countNodes(root->left) + countNodes(root->right);
+}
 
 /************************************************
  * Populating Next Right Pointers in Each Node II
