@@ -585,6 +585,27 @@ int robII(TreeNode* root) {
 }
 
 /***********************************************
+ * Validate Binary Search Tree
+ * first use recusive
+ * second use inorder traversal tree
+ ***********************************************/
+bool isValidBST(TreeNode* root, long int max, long int min) {
+  if (nullptr == root) {
+    return true;
+  }
+  if (root->val >= max || root->val <= min) {
+    return false;
+  }
+  return isValidBST(root->left, root->val, min) 
+	  && isValidBST(root->right, max, root->val);
+}
+
+bool isValidBST(TreeNode* root) {
+  return isValidBST(root, LONG_MAX, LONG_MIN);
+}
+
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
