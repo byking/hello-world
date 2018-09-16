@@ -3,6 +3,7 @@
 #include <queue>
 #include <stack>
 #include <deque>
+#include <map>
 
 DEFINE_string(tree1_preorder, "", "tree 1 preorder");
 DEFINE_string(tree1_inorder, "", "tree 1 inorder");
@@ -534,6 +535,53 @@ vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
     level++;
   }
   return result;
+}
+
+/***********************************************
+ * House Robber III
+ * tips: can't use level traversal tree to solve
+ * use recusive
+ * first solution is a naive way.
+ * second is a optimal way, use map to reduce 
+ *   overlap computing
+ ***********************************************/
+int rob(TreeNode* root) {
+  if (nullptr == root) {
+    return 0;
+  }
+  int val = 0;
+  if (nullptr != root->left) {
+    val += rob(root->left->left) + rob(root->left->right);
+  }
+  if (nullptr != root->right) {
+    val += rob(root->right->left) + rob(root->right->right);
+  }
+  return max(val+root->val, rob(root->left) + rob(root->right));
+}
+
+int robIISub(TreeNode* node, map<TreeNode*,int>& res) {
+  if (nullptr == node) {
+    return 0;
+  }
+  if (res.find(node) != res.end()) {
+    return res[node];
+  }
+
+  int val = 0;
+  if (nullptr != node->left) {
+    val += robIISub(node->left->left, res) + robIISub(node->left->right, res);
+  }
+  if (nullptr != node->right) {
+    val += robIISub(node->right->left, res) + robIISub(node->right->right, res);
+  }
+  val = max(val + node->val, robIISub(node->left, res) + robIISub(node->right, res));
+  res[node] = val;
+  return val;
+};
+
+int robII(TreeNode* root) {
+  map<TreeNode*, int> res;
+  return robIISub(root, res);
 }
 
 /***********************************************
