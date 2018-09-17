@@ -604,6 +604,27 @@ bool isValidBST(TreeNode* root) {
   return isValidBST(root, LONG_MAX, LONG_MIN);
 }
 
+/***********************************************
+ * Lowest Common Ancestor of a Binary Tree
+ ***********************************************/ 
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+  if (nullptr == root || nullptr == p || nullptr == q) {
+    return NULL;
+  } 
+  if (root == p || root == q) {
+    return root;
+  }
+
+  TreeNode* left = lowestCommonAncestor(root->left, p, q);
+  TreeNode* right = lowestCommonAncestor(root->right, p, q);
+
+  if (nullptr != left && nullptr != right) {
+    return root;
+  }
+
+  return left ? left : right; // ac
+  //return left == nullptr ? left : right;//wrong answer
+}
 
 /***********************************************
  * print two dimensional vector
