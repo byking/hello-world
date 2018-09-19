@@ -627,6 +627,27 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 }
 
 /***********************************************
+ * Lowest Common Ancestor of a Binary Tree(BST)
+ * 1. if p, q both less than root, then LCA in 
+ *    left tree
+ * 2. if p, q both greater than root, then LCA 
+ *    in right tree
+ * 3. if p or q equal root, then LCA is p or q
+ ***********************************************/ 
+TreeNode* lowestCommonAncestorBST(TreeNode* root, TreeNode* p, TreeNode* q) {
+  if (nullptr == root) {
+    return NULL;
+  }
+  if (p->val < root->val && q->val < root->val) {
+    return lowestCommonAncestorBST(root->left, p, q);
+  }else if (p->val > root->val && q->val > root->val) {
+    return lowestCommonAncestorBST(root->right, p, q);
+  }else {
+    return root;
+  }
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
