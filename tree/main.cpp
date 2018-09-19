@@ -648,6 +648,19 @@ TreeNode* lowestCommonAncestorBST(TreeNode* root, TreeNode* p, TreeNode* q) {
 }
 
 /***********************************************
+ * Maximum Depth of Binary Tree
+ *    3
+ *  9   20    
+ *    15  7  => 3  
+ ***********************************************/ 
+int maxDepth(TreeNode* root) {
+  if (nullptr == root) {
+    return 0;
+  }
+  return 1 + max(maxDepth(root->left), maxDepth(root->right));
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
