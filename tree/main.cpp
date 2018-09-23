@@ -671,7 +671,7 @@ int maxDepth(TreeNode* root) {
  *	2   4   7
  *
  * Given key to delete is 3. So we find the node
- * with value 3 and delete it.
+ * with value 3 and delete it
  *
  * One valid answer is [5,4,6,2,null,null,7], 
  * shown in the following BST.
@@ -691,6 +691,25 @@ int maxDepth(TreeNode* root) {
  *	    4   7
  ***********************************************/
 TreeNode* deleteNode(TreeNode* root, int key) {
+  if (nullptr == root) {
+    return NULL;
+  } 
+  if (root->val == key) {
+    if (nullptr == root->right) {
+      TreeNode* left_node = root->left;
+      delete root;
+      return left_node;
+    }else {
+      TreeNode* node = root->right;
+      while (nullptr !=  node->left) {
+        node = node->left;
+      }
+      swap(node->val, root->val);
+    }
+  }
+  root->left = deleteNode(root->left, key);
+  root->right = deleteNode(root->right, key);
+  return root;
 }
 
 /***********************************************
