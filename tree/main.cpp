@@ -713,6 +713,48 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 }
 
 /***********************************************
+ * Find Mode in Binary Search Tree
+ * Use O(1) extra space
+ * find mode means find same val node count in 
+ * BST. because of BST, first we use inorder
+ * traversal, and record the list of max same val
+ * node and the pre node(to judge the mode)
+ ***********************************************/
+// we need define three global variables:
+// TreeNode* pre = NULL;
+// int count = 0;
+// int max_count = -1;
+
+vector<int> findMode(TreeNode* root) {
+  vector<int> modes;
+  inorderFindMode(root, modes);
+  return modes;
+}
+
+void inorderFindMode(TreeNode* node, vector<int>& modes){
+  if (nullptr == node) {
+    return;
+  }
+  inorderFindMode(node->left, modes);
+  if (pre != NULL && pre->val == node->val) {
+    count ++;
+  }else {
+    count = 1;
+  }
+
+  if (count == max_count) {
+    modes.push_back(node->val);
+  }else if (count > max_count) {
+    modes.clear();
+    modes.push_back(node->val);
+    max_count = count;
+  }
+
+  pre = node;
+  inorderFindMode(node->right, modes);
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
