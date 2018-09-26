@@ -721,9 +721,32 @@ TreeNode* deleteNode(TreeNode* root, int key) {
  * node and the pre node(to judge the mode)
  ***********************************************/
 // we need define three global variables:
-// TreeNode* pre = NULL;
-// int count = 0;
-// int max_count = -1;
+TreeNode* g_pre = NULL;
+int g_count = 0;
+int g_max_count = -1;
+
+void inorderFindMode(TreeNode* node, vector<int>& modes){
+  if (nullptr == node) {
+    return;
+  }
+  inorderFindMode(node->left, modes);
+  if (g_pre != NULL && g_pre->val == node->val) {
+    g_count ++;
+  }else {
+    g_count = 1;
+  }
+
+  if (g_count == g_max_count) {
+    modes.push_back(node->val);
+  }else if (g_count > g_max_count) {
+    modes.clear();
+    modes.push_back(node->val);
+    g_max_count = g_count;
+  }
+
+  g_pre = node;
+  inorderFindMode(node->right, modes);
+}
 
 vector<int> findMode(TreeNode* root) {
   vector<int> modes;
@@ -731,27 +754,40 @@ vector<int> findMode(TreeNode* root) {
   return modes;
 }
 
-void inorderFindMode(TreeNode* node, vector<int>& modes){
+/***********************************************
+ * Most Frequent Subtree Sum
+ * 1. use recursive to traversal tree to calculate
+ * sum of node and it's subnodes
+ * 2. meanwhile use a map to record the most 
+ * frequent sum
+ * 3. to save memory of map, use a variable 
+ * to record a current max frequent sum, if new
+ * frequent of sum is bigger, then clear the map
+ * and record new sum and new max frequent.
+ ***********************************************/
+int sumTree(TreeNode* node, vector<int> &res, map<int, int> &frequents, int& max_frequent) {
   if (nullptr == node) {
-    return;
+    return 0;
   }
-  inorderFindMode(node->left, modes);
-  if (pre != NULL && pre->val == node->val) {
-    count ++;
-  }else {
-    count = 1;
+  int cur_sum = node->val + sumTree(node->left, res, frequents, max_frequent) 
+	  	+ sumTree(node->right, res, frequents, max_frequent);
+  frequents[cur_sum]++;
+  if (frequents[cur_sum] > max_frequent) {
+    res.clear();
+    res.push_back(cur_sum);
+    max_frequent = frequents[cur_sum];
+  }else if (frequents[cur_sum] == max_frequent) {
+    res.push_back(cur_sum);
   }
+  return cur_sum;
+}
 
-  if (count == max_count) {
-    modes.push_back(node->val);
-  }else if (count > max_count) {
-    modes.clear();
-    modes.push_back(node->val);
-    max_count = count;
-  }
-
-  pre = node;
-  inorderFindMode(node->right, modes);
+vector<int> findFrequentTreeSum(TreeNode* root) {
+  vector<int> res;
+  int max_frequent = INT_MIN;
+  map<int, int> frequents;
+  sumTree(root, res, frequents, max_frequent);
+  return res;
 }
 
 /***********************************************
