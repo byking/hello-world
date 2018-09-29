@@ -820,6 +820,38 @@ int findBottomLeftValue(TreeNode* root) {
 }
 
 /***********************************************
+ * Find Largest Value in Each Tree Row
+ * use BFS the travesal tree, record largest value
+ * int each row  
+ ***********************************************/
+vector<int> largestValues(TreeNode* root) { 
+  queue<TreeNode*> q;
+  vector<int> res;
+  if (nullptr != root) {
+    q.push(root);
+  }
+  while (!q.empty()) {
+    int q_size = q.size();
+    int level_max_value = INT_MIN;
+    for (int i = 0; i < q_size; i++) {
+      TreeNode* node = q.front();
+      q.pop();
+      if (node->val > level_max_value) {
+        level_max_value = node->val;
+      } 
+      if (nullptr != node->left) {
+        q.push(node->left);
+      }
+      if (nullptr != node->right) {
+      	q.push(node->right);
+      }
+    }
+    res.push_back(level_max_value);
+  }
+  return res;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
