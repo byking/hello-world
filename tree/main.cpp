@@ -852,6 +852,43 @@ vector<int> largestValues(TreeNode* root) {
 }
 
 /***********************************************
+ * Diameter of Binary Tree
+ * diameter of binary tree is length of the 
+ * longest path between any two nodes in a tree.
+ * 1. diameter = depth of left + depth of right
+ * 2. every node as root has a diameter, we need
+ *    the max diameter;
+ * note: count the depth of tree need to judge
+ * subnote is null or not.
+ ***********************************************/
+int dfsGetDepth(TreeNode* node, int& diameter) {
+  if (nullptr == node) {
+    return 0;
+  }
+  int left_depth = 0;
+  int right_depth = 0;
+  if (nullptr != node->left) {
+    left_depth = dfsGetDepth(node->left, diameter) + 1;
+  }
+  if (nullptr != node->right) {
+    right_depth = dfsGetDepth(node->right, diameter) + 1;
+  }
+
+  int cur_diameter = left_depth + right_depth;
+  if (cur_diameter > diameter) {
+    diameter = cur_diameter;
+  } 
+
+  return max(left_depth, right_depth);
+}
+
+int diameterOfBinaryTree(TreeNode* root) {
+  int diameter = 0;
+  int depth = dfsGetDepth(root, diameter); 
+  return diameter;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
