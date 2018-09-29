@@ -791,6 +791,35 @@ vector<int> findFrequentTreeSum(TreeNode* root) {
 }
 
 /***********************************************
+ * Find Bottom Left Tree Value
+ * 1. first we can use bfs to traversal tree, 
+ * record the most left node in last node.
+ * 2. also can use recursive to dfs travesal tree.
+ * traversal left tree first to get the most left
+ * node, if new depth greater than max depth then 
+ * update most left node.
+ ***********************************************/
+void dfsFindMostLeftValue(TreeNode* node, int& most_left_value, int cur_depth, int& max_depth) {
+  if (nullptr == node) {
+    return;
+  }
+  if (cur_depth > max_depth) {
+    most_left_value = node->val;
+    max_depth = cur_depth;
+  }
+  dfsFindMostLeftValue(node->left, most_left_value, cur_depth + 1, max_depth);
+  dfsFindMostLeftValue(node->right, most_left_value, cur_depth + 1, max_depth);
+}
+
+int findBottomLeftValue(TreeNode* root) {
+  int most_left_value = 0;
+  int cur_depth = 0;
+  int max_depth = -1;
+  dfsFindMostLeftValue(root, most_left_value, cur_depth, max_depth);  
+  return most_left_value;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
