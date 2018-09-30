@@ -889,6 +889,33 @@ int diameterOfBinaryTree(TreeNode* root) {
 }
 
 /***********************************************
+ * Convert BST to Greater Tree
+ * the key solution would be a way to visit nodes
+ * in descending order, keeping a sum of all 
+ * values that we have already visited and adding 
+ * that sum to the node's values as we traverse
+ * the tree.
+ * example:
+ *   5            18
+ * 2   13  --> 20    13
+ ***********************************************/
+TreeNode* convertBSTRecursive(TreeNode* node, int& sum) {
+  if (nullptr == node) {
+    return node;
+  }
+  convertBSTRecursive(node->right, sum);
+  sum += node->val;
+  node->val = sum;
+  convertBSTRecursive(node->left, sum);
+  return node;
+}
+
+TreeNode* convertBST(TreeNode* root) {
+  int sum = 0;
+  return convertBSTRecursive(root, sum);  
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
