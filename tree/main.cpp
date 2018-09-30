@@ -916,6 +916,39 @@ TreeNode* convertBST(TreeNode* root) {
 }
 
 /***********************************************
+ * Binary Tree Tilt
+ * calculate tilt of the whole tree, the tilt of
+ * a tree node is defined as the absolute 
+ * difference between the sum of all left subtree
+ * node values and the sum of all right subtree
+ * node values. Null node has tilt 0.
+ * Example:
+ *   1
+ * 2   3 --> 1 
+ * tilt of node 2: 0
+ *              3: 0
+ *              1: |2-3|=1
+ *           tree: 0 + 0 + 1 = 1
+ ***********************************************/
+int calTiltRecursive(TreeNode* node, int& tilt) {
+  if (nullptr == node) {
+    return 0;
+  }
+  int left_sum = calTiltRecursive(node->left, tilt);
+  int right_sum = calTiltRecursive(node->right, tilt);
+   
+  tilt += std::abs(left_sum - right_sum);
+   
+  return left_sum + right_sum + node->val;
+}
+
+int findTilt(TreeNode* root) {
+  int tilt = 0;
+  int sum = calTiltRecursive(root, tilt);
+  return tilt;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
