@@ -949,6 +949,23 @@ int findTilt(TreeNode* root) {
 }
 
 /***********************************************
+ * Subtree of Another Tree
+ ***********************************************/
+bool equals(TreeNode* s, TreeNode* t) {
+  if (nullptr == s && nullptr == t) {
+    return true;
+  }
+  if (nullptr == s || nullptr == t) {
+    return false;
+  }
+  return s->val == t->val && equals(s->left, t->left) && equals(s->right, t->right);
+}
+
+bool isSubtree(TreeNode* s, TreeNode* t) {
+  return (nullptr != s) && (equals(s, t) || isSubtree(s->left, t) || isSubtree(s->right, t));  
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
