@@ -965,6 +965,23 @@ bool isSubtree(TreeNode* s, TreeNode* t) {
   return (nullptr != s) && (equals(s, t) || isSubtree(s->left, t) || isSubtree(s->right, t));  
 }
 
+
+/***********************************************
+ * Construct String from Binary Tree
+ ***********************************************/
+string tree2str(TreeNode* t) {
+  if (nullptr == t) {
+    return "";
+  }
+  if (nullptr == t->left && nullptr == t->right) {
+    return to_string(t->val) + "";
+  }
+  if (nullptr == t->right) {
+    return to_string(t->val) + "(" + tree2str(t->left) + ")";
+  }
+  return to_string(t->val) + "(" + tree2str(t->left) + ")(" + tree2str(t->right) + ")";
+}
+
 /***********************************************
  * print two dimensional vector
  ***********************************************/ 
