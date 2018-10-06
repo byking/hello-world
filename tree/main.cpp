@@ -1001,6 +1001,39 @@ TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {
 }
 
 /***********************************************
+ * Add One Row to Tree
+ * need to think: 
+ * 1. insert before root
+ * 2. insert after leaf(when node is subnode of 
+ * leaf, but cur_d equal input d-1)
+ * 3. input dept equal dept of tree - 1 
+ ***********************************************/
+TreeNode* recursiveAddOneRow(TreeNode* node , int v, int d, int cur_d, int flag) {
+  if ((d - 1) == cur_d) {
+    TreeNode* new_node = new TreeNode(v);
+    if (0 == flag) {
+      new_node->left = node;
+    }else if (1 == flag) {
+      new_node->left = node;
+    }else if (2 == flag) {
+      new_node->right = node; 
+    }
+    return new_node;
+  }
+  if (nullptr == node) {
+    return nullptr;
+  }
+  node->left = recursiveAddOneRow(node->left, v, d, cur_d + 1, 1);
+  node->right = recursiveAddOneRow(node->right, v, d, cur_d + 1, 2);
+
+  return node; 
+} 
+
+TreeNode* addOneRow(TreeNode* root, int v, int d) {
+  return recursiveAddOneRow(root, v, d, 0, 0);
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
