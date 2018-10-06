@@ -1034,6 +1034,35 @@ TreeNode* addOneRow(TreeNode* root, int v, int d) {
 }
 
 /***********************************************
+ * Find Duplicate Subtrees
+ ***********************************************/
+string findDuplicateRecursive(TreeNode* node, map<string, int> &record, 
+		            vector<TreeNode*> &res) {
+  if (nullptr == node) {
+    return "#";
+  }
+  string serial = to_string(node->val) + 
+	          findDuplicateRecursive(node->left, record, res) +
+		  findDuplicateRecursive(node->right, record, res);
+  if (record.find(serial) != record.end()) {
+    record[serial]++;
+    if (record[serial] == 2) {
+      res.push_back(node);
+    } 
+  }else {
+    record[serial] = 1;
+  }
+  return serial;
+}
+
+vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+  map<string, int> record;
+  vector<TreeNode*> res;
+  findDuplicateRecursive(root, record, res);
+  return res;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
