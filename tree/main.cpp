@@ -4,6 +4,7 @@
 #include <stack>
 #include <deque>
 #include <map>
+#include <set>
 
 DEFINE_string(tree1_preorder, "", "tree 1 preorder");
 DEFINE_string(tree1_inorder, "", "tree 1 inorder");
@@ -1060,6 +1061,26 @@ vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
   vector<TreeNode*> res;
   findDuplicateRecursive(root, record, res);
   return res;
+}
+
+/***********************************************
+ * Two Sum IV - Input is a BST
+ ***********************************************/
+bool findTargetRecursive(TreeNode* node, int k, set<int> &record) {
+  if (nullptr == node) {
+    return false;
+  }
+  if (record.find(k - node->val) != record.end()) {
+    return true;
+  }
+  record.insert(node->val);
+  return findTargetRecursive(node->left, k, record) 
+	 || findTargetRecursive(node->right, k, record);
+}
+
+bool findTarget(TreeNode* root, int k) {
+  set<int> record;
+  return findTargetRecursive(root, k, record);
 }
 
 /***********************************************
