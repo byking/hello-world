@@ -1084,6 +1084,41 @@ bool findTarget(TreeNode* root, int k) {
 }
 
 /***********************************************
+ * Maximum Binary Tree
+ ***********************************************/
+TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+  TreeNode* root = nullptr;
+  for (vector<int>::iterator it = nums.begin(); it != nums.end(); it++) {
+    if (nullptr == root) {
+      root = new TreeNode((*it));
+      continue;
+    }
+    TreeNode* cur = root;
+    TreeNode* pre = nullptr;
+    TreeNode* new_node = new TreeNode((*it));
+    while (nullptr != cur) {
+      if (cur->val > (*it)) {
+	pre = cur;
+        cur = cur->right;
+      }else {
+	if (nullptr == pre) {
+	  new_node->left = cur;
+	  root = new_node;
+	}else {
+          new_node->left = cur;
+	  pre->right = new_node;
+	}
+	break;
+      }
+    }
+    if (nullptr == cur && nullptr != pre) {
+      pre->right = new_node;
+    }
+  }
+  return root;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
