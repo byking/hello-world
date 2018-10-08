@@ -25,6 +25,14 @@ struct TreeLinkNode {
   TreeLinkNode* next;
 };
 
+struct InfoNode {
+  TreeNode* node;
+  int depth; 
+  int pos; //position in the depth
+  InfoNode(TreeNode* node, int depth, int pos) :
+	  node(node), depth(depth), pos(pos) {}
+};
+
 /*********************************
  * Binary Tree Preorder Traversal
  *  1   
@@ -1116,6 +1124,37 @@ TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
     }
   }
   return root;
+}
+
+/***********************************************
+ * Maximum Width of Binary Tree
+ * The width of one level is defined as the 
+ * length between the end-nodes (the leftmost 
+ * and right most non-null nodes in the level, 
+ * where the null nodes between the end-nodes 
+ * are also counted into the length calculation.
+ * example:
+ *   1               1                1
+ * 3   2 => 2      2   4   => 4     2   3 => 2
+ *               3       5        4
+ *
+ * as the defination of width of tree, we can use
+ * the bfs to traverse the tree, meanwhile record
+ * the leftmost node, the width equal the max (no
+ * null right node - left most node + 1).  
+ ***********************************************/
+int widthOfBinaryTree(TreeNode* root) {
+  if (nullptr == root) {
+    return 0;
+  }
+  queue<TreeNode*> q;
+  q.push(new InfoNode(root, 0, 0));
+  int curDepth = 0;
+  int left = 0;
+  int res = 0;
+  while (!q.empty()) {
+    Info  
+  }
 }
 
 /***********************************************
