@@ -1171,6 +1171,28 @@ int widthOfBinaryTree(TreeNode* root) {
 }
 
 /***********************************************
+ * Trim a Binary Search Tree
+ * Given a binary search tree and the lowest and 
+ * highest boundaries as L and R, trim the tree 
+ * so that all its elements lies in [L, R] (R >= L)
+ * example: 
+ *   1                 1
+ * 0   2  L=1,R=2  =>    2
+ *
+ *   3                  3
+ * 0   4               2
+ *   2    L=1,R=3  => 1
+ * 1
+ * method:
+ * process recursively, when node < L trim left,
+ * when node > R trim right, otherwise trim left
+ * and right.
+ ***********************************************/ 
+ TreeNode* trimBST(TreeNode* root, int L, int R) {
+ 
+ }
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
