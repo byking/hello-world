@@ -1147,14 +1147,27 @@ int widthOfBinaryTree(TreeNode* root) {
   if (nullptr == root) {
     return 0;
   }
-  queue<TreeNode*> q;
+  queue<InfoNode*> q;
   q.push(new InfoNode(root, 0, 0));
   int curDepth = 0;
   int left = 0;
   int res = 0;
   while (!q.empty()) {
-    Info  
+    InfoNode* iNode = q.front();
+    q.pop();
+    if (nullptr != iNode->node->left) {
+      q.push(new InfoNode(iNode->node->left, iNode->depth + 1, iNode->pos * 2));
+    }
+    if (nullptr != iNode->node->right) {
+      q.push(new InfoNode(iNode->node->right, iNode->depth + 1, iNode->pos * 2 + 1));
+    }
+    if (curDepth != iNode->depth) {
+      left = iNode->pos;
+      curDepth = iNode->depth;
+    }
+    res = max(res, iNode->pos - left + 1);
   }
+  return res;
 }
 
 /***********************************************
