@@ -1188,9 +1188,20 @@ int widthOfBinaryTree(TreeNode* root) {
  * when node > R trim right, otherwise trim left
  * and right.
  ***********************************************/ 
- TreeNode* trimBST(TreeNode* root, int L, int R) {
- 
- }
+TreeNode* trimBST(TreeNode* root, int L, int R) {
+  if (nullptr == root) {
+    return root;
+  }
+  if (root->val < L) {
+    return trimBST(root->right, L, R);
+  } 
+  if (root->val > R) {
+    return trimBST(root->left, L, R);
+  }
+  root->left = trimBST(root->left, L, R);
+  root->right = trimBST(root->right, L, R);
+  return root;
+}
 
 /***********************************************
  * print two dimensional vector
