@@ -1204,6 +1204,33 @@ TreeNode* trimBST(TreeNode* root, int L, int R) {
 }
 
 /***********************************************
+ * Second Minimum Node In a Binary Tree 
+ ***********************************************/
+void recursiveFindSecondMinimumValue(TreeNode* node, int& secondMin, int& min) {
+  if (nullptr == node) {
+    return;
+  }
+  if (node->val > min && node->val < secondMin) {
+    secondMin = node->val;
+  }else if (node->val == min) {
+    recursiveFindSecondMinimumValue(node->left, secondMin, min);
+    recursiveFindSecondMinimumValue(node->right, secondMin, min);
+  }
+  
+  return;
+}
+
+int findSecondMinimumValue(TreeNode* root) {
+  int secondMin = INT_MAX;
+  int min = root->val;
+  recursiveFindSecondMinimumValue(root, secondMin, min);
+  if (min == secondMin || secondMin == INT_MAX) {
+    return -1;
+  }
+  return secondMin;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
