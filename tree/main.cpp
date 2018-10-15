@@ -1234,15 +1234,15 @@ int findSecondMinimumValue(TreeNode* root) {
  * Redundant Connection
  * DSU: Disjoint Set Union, keep track of 
  * connectivity of each element.
- * arr: 0,1,2,3,4,5 {1,2,3} {4,5} {0} 
+ * arr: 0,1,2,3,4,5 {1,2,3} {4,5} {0}
+ *      (2,1)(3,1) (5,4) 
  * DSU: 0,1,1,1,4,4 arr[2] = 1 means 2 connect 1
  * tips: if we want find subset quick, can use 
  * 	 tree to record connected elements.
- * but in these problem, there is a little difference
- * not generate the subset, to find redundant.
- * so we use while to find end connection of eleament,
- * another way is build the subset and then find 
- * (a,b) in the subset or not.
+ * one method is for every connection we traversal
+ * N, take O(N^2) time, the other method is record
+ * root for every subset, must use while to find
+ * subset, take O(N) time.
  ***********************************************/
 vector<int> findRedundantConnection(vector<vector<int>>& edges) {
   vector<int> dsu(2000,0);
