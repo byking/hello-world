@@ -1231,6 +1231,44 @@ int findSecondMinimumValue(TreeNode* root) {
 }
 
 /***********************************************
+ * Redundant Connection
+ * DSU: Disjoint Set Union, keep track of 
+ * connectivity of each element.
+ * arr: 0,1,2,3,4,5 {1,2,3} {4,5} {0} 
+ * DSU: 0,1,1,1,4,4 arr[2] = 1 means 2 connect 1
+ * tips: if we want find subset quick, can use 
+ * 	 tree to record connected elements.
+ * but in these problem, there is a little difference
+ * not generate the subset, to find redundant.
+ * so we use while to find end connection of eleament,
+ * another way is build the subset and then find 
+ * (a,b) in the subset or not.
+ ***********************************************/
+vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+  vector<int> dsu(2000,0);
+  for (int i = 0; i < (int)dsu.size(); i++) {
+    dsu[i] = i;
+  } 
+  vector<int> res;
+  for (auto e : edges) {
+    int n1 = e[0];
+    int n2 = e[1];
+    while (n1 != dsu[n1]) { //must
+      n1 = dsu[n1];
+    }
+    while (n2 != dsu[n2]) { //must
+      n2 = dsu[n2];
+    }
+    if (n1 == n2) {
+      res = e;
+    }else {
+      dsu[n1] = n2;
+    }
+  }
+  return res;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
