@@ -1269,6 +1269,45 @@ vector<int> findRedundantConnection(vector<vector<int>>& edges) {
 }
 
 /***********************************************
+ * Longest Univalue Path
+ * 1. use dfs recursive process
+ * 2. if cur_node_val equal left_node_val: 
+ *    cur_left_path_len + 1, else equal 0.
+ *    the same to right.
+ *
+ *    the path len for cur node: cur_left_path_len 
+ *    				 + cur_right_path_len
+ *    
+ *    the res is max of cur_path_len
+ *
+ * 3. the path len for parent is max of cur_left_path_len,
+ *    cur_right_path_len.
+ ***********************************************/
+int univaluePathForParent(TreeNode* node, int& res) {
+  if (nullptr == node) {
+    return 0;
+  }
+  int left_path_len = univaluePathForParent(node->left, res);
+  int right_path_len = univaluePathForParent(node->right, res);
+  int cur_left_len = 0;
+  int cur_right_len = 0;
+  if (nullptr != node->left && node->left->val == node->val) {
+    cur_left_len += left_path_len + 1;
+  }
+  if (nullptr != node->right && node->right->val == node->val) {
+    cur_right_len += right_path_len + 1;
+  }
+  res = max(res, cur_left_len + cur_right_len);
+  return max(cur_left_len, cur_right_len);
+}
+
+int longestUnivaluePath(TreeNode* root) {
+  int res = 0;
+  univaluePathForParent(root, res);
+  return res;  
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
