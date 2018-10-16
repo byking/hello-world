@@ -1308,6 +1308,34 @@ int longestUnivaluePath(TreeNode* root) {
 }
 
 /***********************************************
+ * Binary Tree Pruning
+ * 1. use DFS traversal the tree
+ * 2. for every node do:
+ *    check need to prune, if root->val = 1 || 
+ *    root left subtree contain 1 or right subtree
+ *    contain 1 no need to prune, otherwise to prune
+ * 3. to easy prune, we change the tree, if pruning 
+ *    return nullptr, so if null means not contain 1.
+ * tips: before root->left = xxx, need check root->left
+ *       is null or not
+ ***********************************************/
+TreeNode* pruneTree(TreeNode* root) {
+  if (nullptr != root->left) { 
+    root->left = pruneTree(root->left);
+  }
+  if (nullptr != root->right) {
+    root->right = pruneTree(root->right);
+  }
+  if (nullptr != root 
+		 && (root->val == 1 
+		     || nullptr != root->left 
+		     || nullptr != root->right)) {
+    return root;	  
+  }
+  return nullptr;
+}
+
+/***********************************************
  * print two dimensional vector
  ***********************************************/ 
 void printTwoDimensionalVector(vector<vector<int>> vectors) {
