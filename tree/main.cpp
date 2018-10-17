@@ -1335,6 +1335,28 @@ TreeNode* pruneTree(TreeNode* root) {
   return nullptr;
 }
 
+/*************** last tree topic****************/
+/***********************************************
+ * Increasing Order Search Tree
+ ***********************************************/
+void recursiveIncreasingBST(TreeNode* node, TreeNode* cur) {
+  if (nullptr == node) {
+    return;
+  }
+  recursiveIncreasingBST(node->left, cur);
+  node->left = nullptr;
+  cur->right = node;
+  cur = node;
+  recursiveIncreasingBST(node->right, cur);
+}
+
+TreeNode* increasingBST(TreeNode* root) {
+  TreeNode* node = new TreeNode(0);
+  TreeNode* cur = node;
+  recursiveIncreasingBST(root, cur);
+  return node->right;
+}
+
 /***********************************************
  * print two dimensional vector
  ***********************************************/ 
