@@ -1335,8 +1335,52 @@ TreeNode* pruneTree(TreeNode* root) {
   return nullptr;
 }
 
-/*************** last tree topic****************/
-/***********************************************
+/******* All Possible Full Binary Trees ********
+ * 有性质“完全二叉树结点个数必定为奇数”。
+ * 所以问题变简单了点，如果输入N为偶数，直接输出空vector即可。
+ * 对于一个有n个结点的完全二叉树，
+ * 其可以分解为有i个结点（i为奇数）的左子树和n-i-1个结点的右子树，
+ * 所以只需遍历i的取值即可！
+ ***********************************************/
+vector<TreeNode*> allPossibleFBT(int N) {
+  vector<TreeNode*>res;      
+  map<int,vector<TreeNode*>> mp;
+  if (N == 1){
+    TreeNode *root = new TreeNode(0);
+    res.push_back(root);
+    return res;
+  }
+  if (N%2==0 || N<1) {  
+    return res;  
+  }      
+  vector<TreeNode*> lRes,rRes;
+  for (int i=1;i<N; i+=2){
+    if (mp.count(i)==0) { 
+      lRes = allPossibleFBT(i); 
+      mp[i] = lRes;
+    }else { 
+      lRes = mp[i];
+    }
+    if (mp.count(N-i-1)==0)  { 
+      rRes = allPossibleFBT(N-i-1); 
+      mp[N-i-1] = rRes;
+    }else { 
+      rRes = mp[N-i-1]; 
+    }         
+    
+    for (int j=0; j<lRes.size(); j++) {
+      for (int k=0; k<rRes.size(); k++){
+	TreeNode* node = new TreeNode(0);
+ 	node->left = lRes[j];
+	node->right = rRes[k];
+	res.push_back(node);
+      }
+    }
+    return res;
+  }   	  
+}
+
+/*************** last tree topic****************
  * Increasing Order Search Tree
  * time complexity is O(n), n is number of nodes.
  * space complexity is O(h), h is height of tree.          
