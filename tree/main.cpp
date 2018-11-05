@@ -1338,24 +1338,59 @@ TreeNode* pruneTree(TreeNode* root) {
 /*************** last tree topic****************/
 /***********************************************
  * Increasing Order Search Tree
+ * time complexity is O(n), n is number of nodes.
+ * space complexity is O(h), h is height of tree.          
  ***********************************************/
+TreeNode* increasingBST_cur = nullptr;
+void recursiveIncreasingBST(TreeNode* node) {
+  if (nullptr == node) {
+    return;
+  }
+  recursiveIncreasingBST(node->left);
+  node->left = nullptr;
+  increasingBST_cur->right = node;
+  increasingBST_cur = increasingBST_cur->right;
+  recursiveIncreasingBST(node->right);
+}
+
+TreeNode* increasingBST(TreeNode* root) {
+  TreeNode* new_root = new TreeNode(0);
+  increasingBST_cur = new_root;
+  recursiveIncreasingBST(root);
+  return new_root->right;
+}
+
+/**************** bad case **********************
+ * eg.        5
+ *         3    6
+ *       2  4     8
+ *     1         7  9
+ * ./output/test_tree --tree1_preorder=5,3,2,1,4,6,8,7,9 --tree1_inorder=1,2,3,4,5,6,7,8,9
+ * output is 5,6,8,9; but we want 1,2,3,4,5,6,7,8,9
+ * error: use a pointer as a recursive function parameter, and want to change the pointer in 
+ * ervery level of recursive function. pointer can't not be changed, only can change content
+ * pointer pointed. In this case, first call node is root, cur is 0, and cur->right = node, 
+ * and in recursive node->left = nullptr, so result is 5,6,8,9. recursive in recursive not 
+ * change the pointer cur.
+ *
 void recursiveIncreasingBST(TreeNode* node, TreeNode* cur) {
   if (nullptr == node) {
     return;
   }
   recursiveIncreasingBST(node->left, cur);
-  node->left = nullptr;
+  node->left = nullptr; 
   cur->right = node;
-  cur = node;
+  cur = cur->right;
   recursiveIncreasingBST(node->right, cur);
 }
 
 TreeNode* increasingBST(TreeNode* root) {
-  TreeNode* node = new TreeNode(0);
-  TreeNode* cur = node;
+  TreeNode* new_root = new TreeNode(0);
+  TreeNode* cur = new_root;
   recursiveIncreasingBST(root, cur);
-  return node->right;
+  return new_root->right;
 }
+*************** bad case **********************/
 
 /***********************************************
  * print two dimensional vector
@@ -1383,7 +1418,7 @@ int main(int argc, char* argv[]) {
   TreeNode *tree1_root = buildTreeByPreInorder(tree1_preorder_vec, tree1_inorder_vec);
   cout << "***buildTreeByPreInorder***" << endl;
   bfsTree(tree1_root);
-  
+
   /***Construct Binary Tree from Inorder and Postorder Traversal***/
   TreeNode *tree1_root_post = buildTreeByInPostorder(tree1_inorder_vec, tree1_postorder_vec);
   cout << endl << "***buildTreeByInPostorder***" << endl;
