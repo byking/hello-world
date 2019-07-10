@@ -12,7 +12,7 @@
    例如0-1背包问题中，每一层的状态是到当前层可以取到的质量(2,0) (2,2) (2,4)，第二层即数组第三位的时候
    可以取到的质量为0,2,4，记录下来再有重复状态出现就可以不用计算，因为计算过的状态最后的maxVal都算到最后
    结果里面了。
-   
+7. 步骤：明确结束条件，遍历层，遍历层上不同状态，添加剪枝条件.
 
 /***************************************
  * 回溯 NO.001
@@ -152,3 +152,32 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
   }
   mem[pos][curSum] = 1;
 }
+
+
+/***************************************
+ * 回溯 NO.004
+ *
+ * 正则表达式: '*'匹配0-n个字符 '?'匹配0-1个字符
+ * bool match = false;
+ * rmatch(0, 0, text, pattern, match); // text文本 pattern正则
+ * void rmatch(int ti, int pi, string text, string pattern, bool& match) {
+ *   if (match == true) return;
+ *   if (pi == pattern.length() || ti == text.lenght()) {
+ *     match = ((pi == pattern.length()) && ti == text.length());
+ *     return match;
+ *   }
+ *   if (pattern[pi] == '*') {
+ *     for (int i = 0; i <= text.lenght() - ti; i++) {
+ *       rmatch(ti + i, pi + 1, text, pattern, match);
+ *     }
+ *   }else if (pattern[pi] == '?') {
+ *     rmatch(ti, pi + 1, text, pattern, match);
+ *     rmatch(ti + 1, pi + 1, text, pattern, match);
+ *   }else {
+ *     if (text[ti] == pattern[pi]) {
+ *       rmatch(ti + 1, pi + 1, text, pattern, match);
+ *     }  
+ *   }
+ * }  
+ ***************************************/
+
