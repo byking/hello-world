@@ -95,3 +95,55 @@ bool checkValid(vector<string>& input, int row, int col) {
   }
   return true;
 }
+
+
+/***************************************
+ * 回溯 NO.003
+ * partition-equal-subset-sum (0-1背包问题变种) 
+ * 0-1背包问题: 
+ * int maxVal = INT_MIN;
+ * // vector<vector<int>> mem(item.size(), vector<int>(totalSumOfItems, -1));
+ * solve01(vector<int>& items, int pos, int curW, int w, int& maxVal) {
+ *   if (pos == (int)items.size() || curW == w) { // 注意: 加上'res == w'剪枝
+ *     maxVal = max(maxVal, curW);
+ *     return;
+ *   }
+ *   // if (mem[pos][curw] != -1) return; 
+ *   solve01(items, pos + 1, curW, w, maxVal);
+ *   if (curW + items[pos] <= w) { // 剪枝
+ *     solve01(items, pos + 1, curW + items[pos], w, maxVal);
+ *   }
+ *   // mem[pos][curW] = 1; // 标记pos位置重量为curW的情况已经计算过maxVal
+ * }
+ * 
+ * solve01(items, 0, 0, w);
+ * 
+ * 备忘录版本: 上面去掉注释
+ *  
+ ***************************************/
+bool canPartition(vector<int>& nums) {
+  double sum = 0;
+  for (auto num : nums) {
+    sum += num;
+  }
+  sum /= 2;
+  vector<vector<int>> mem(nums.size(), vector<int>(20000, -1));
+  double maxVal = LONG_MIN;
+  find(nums, 0, 0, sum, mem, maxVal); 
+  return (maxVal == sum);
+}
+
+void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vector<int>>& mem, double& maxVal) {
+  if (pos == (int)nums.size() || curSum == aimSum) {
+    maxVal = max(curSum, maxVal); 
+    return;  // 注意结束情况要return 
+  }
+  if (mem[pos][curSum] != -1) {
+    return;
+  }
+  find(nums, pos + 1, curSum, aimSum, mem, maxVal);
+  if (curSum + nums[pos] <= aimSum) {
+    find(nums, pos + 1, curSum + nums[pos], aimSum, mem, maxVal);
+  }
+  mem[pos][curSum] = 1;
+}
