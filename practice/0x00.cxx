@@ -150,7 +150,7 @@ bool canPartition(vector<int>& nums) {
     sum += num;
   }
   sum /= 2;
-  vector<vector<int>> mem(nums.size(), vector<int>(20000, -1));
+  vector<vector<int>> mem(nums.size(), vector<int>(20000, -1)); // 20000ÊÇËùÓĞÎïÆ·ÖØÁ¿¼ÓÆğÀ´µÄ×î´óÖµ
   double maxVal = LONG_MIN;
   find(nums, 0, 0, sum, mem, maxVal); 
   return (maxVal == sum);
@@ -174,12 +174,12 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
 
 /***************************************
  * »ØËİ NO.004
- *
+ * regular-expression-matching
  * ÕıÔò±í´ïÊ½: '*'Æ¥Åä0-n¸ö×Ö·û '?'Æ¥Åä0-1¸ö×Ö·û
  * bool match = false;
  * rmatch(0, 0, text, pattern, match); // textÎÄ±¾ patternÕıÔò
  * void rmatch(int ti, int pi, string text, string pattern, bool& match) {
- *   if (match == true) return;
+ *   if (match == true) return; // ×¢ÒâÕâÀï±ØĞë£¬Òª²»¿ÉÄÜ»á±»ÆäËûfalse½á¹û¸²¸Ç
  *   if (pi == pattern.length() || ti == text.lenght()) {
  *     match = ((pi == pattern.length()) && ti == text.length());
  *     return match;
@@ -196,6 +196,49 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
  *       rmatch(ti + 1, pi + 1, text, pattern, match);
  *     }  
  *   }
- * }  
+ * }
+ *
+ * ÏÂÃæÕâµÀÌâ±È½ÏÂé·³ '*' ±íÊ¾ÆäÔÚpatternÖĞÇ°Ò»¸ö×Ö·û¿ÉÒÔ³öÏÖ0-n´Î
+ * '.' ±íÊ¾¿ÉÒÔÆ¥ÅäÒ»¸öÈÎÒâ×Ö·û.
+ * ½áÊøÌõ¼ş£¬text×ßÍêpatternÃ»ÓĞ×ßÍêµÄÇé¿öÏÂ²»Ò»¶¨²»Æ¥Åä£¬ÒòÎªpattern
+ * ÖĞ*»á×÷·ÏÇ°Ò»¸ö×Ö·û´®. text = a ; pattern = ab*; ±éÀúpattern£¬´¦Àí
+ * ¸÷ÖÖ×´Ì¬£ºÕâÀï×´Ì¬ÓĞµã¶à¡£Èç¹ûÊÇ'.'¾Í¶¼Ç°½øÒ»¸ö£¬µ«ÊÇÈç¹ûÏÂÒ»patternÊ
+ * ÊÇ'*'¾ÍĞèÒª´¦Àí×÷·Ïµ±Ç°patternµÄÇé¿ö£»Èç¹ûÊÇ×Ö·û¾Í¿´ÊÇ·ñÏàµÈ£¬Ò²Òª´¦Àí
+ * ÏÂÒ»¸öpatternÊÇ'*'µÄÊ±ºò×÷·Ïµ±Ç°patternµÄÇé¿ö.
+ *  Èç¹ûµ±Ç°ÊÇ'*',ĞèÒªÃ¶¾ÙpatternÖĞ'*'Ç°Ò»¸ö×Ö·û³öÏÖ1-nµÄÇé¿ö,0µÄÇé¿öÔÚ
+ * '.'ºÍ×Ö·ûµÄÊ±ºòµ¥¶À´¦ÀíÁË. 
  ***************************************/
-
+void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
+  if (match == true) {
+    return;
+  }
+  if (pi == pattern.length()) {
+    if (ti == text.length()) {
+      match = true;
+      return;
+    }
+  }   
+  if (pattern[pi] == '.') {
+    rMatch(text, pattern, ti + 1, pi + 1, match);
+    if (pi < pattern.length() - 1 && pattern[pi + 1]  == '*') {
+      rMatch(text, pattern, ti, pi + 2, match);
+    }
+  }else if (pattern[pi] == '*') {
+    rMatch(text, pattern, ti, pi + 1, match);
+    if (pi > 0) {
+      for (int i = ti; i < text.length(); i++) {
+        if (text[i] != pattern[pi - 1] && pattern[pi - 1] != '.') {
+	  break;
+	}
+        rMatch(text, pattern, i + 1, pi + 1, match);
+      }
+    }
+  }else {
+    if (ti < text.length() && text[ti] == pattern[pi]) {
+      rMatch(text, pattern, ti + 1, pi + 1, match);
+    }
+    if (pi < pattern.length() - 1 && pattern[pi + 1]  == '*') {
+      rMatch(text, pattern, ti, pi + 2, match);
+    }
+  }
+}
