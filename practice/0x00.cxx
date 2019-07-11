@@ -55,6 +55,24 @@ bool checkValid(string& input) {
   return (balance == 0); // 注意：显示return
 }
 
+// 有剪枝版本
+void find(string& input, int pos, int leftP, int rightP, vector<string>& res) {
+  if (pos == input.length()) {
+    if (leftP == rightP) {
+      res.push_back(input);
+    }
+    return;
+  }
+  if (leftP < input.length() / 2) {
+    input[pos] = '(';
+    find(input, pos + 1, leftP + 1, rightP, res);
+  }
+  if (leftP > rightP) {
+    input[pos] = ')';
+    find(input, pos + 1, leftP, rightP + 1, res);
+  }
+}
+
 
 /***************************************
  * 回溯 NO.002
