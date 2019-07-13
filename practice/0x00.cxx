@@ -271,6 +271,12 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
  * 
  * 0-1背包
  * weight:物品重量 n:物品个数 w:背包可承受重量
+ * 举例: weight: 2, 2, 3  w: 5
+ *     质量 0 1 2 3 4 5          0 1 2 3 4 5         0 1 2 3 4 5         0 1 2 3 4 5 
+ * 物品0(2) 0 0 0 0 0 0  i=0 0(2)1 0 1 0 0 0 i=1 0(2)1 0 1 0 0 0 i=2 0(2)1 0 1 0 0 0
+ *     1(2) 0 0 0 0 0 0  --> 1(2)0 0 0 0 0 0 --> 1(2)1 0 1 0 1 0 --> 1(2)1 0 1 0 1 0 --> return 5
+ *     2(3) 0 0 0 0 0 0      2(3)0 0 0 0 0 0     2(3)0 0 0 0 0 0     2(3)1 0 1 1 1 1
+ *
  * int knapsack(vector<int> weight, int n, int w) {
  *   vector<vector<bool>> states(n, vector<int>(w + 1, false));
  *   states[0][0] = true;
