@@ -270,7 +270,7 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
  * partition-equal-subset-sum (0-1背包问题变种) 
  * 
  * 0-1背包
- * weight:物品重量 n:物品个数 w:背包可承受重量
+ * weight:物品重量 n:物品个数 w:背包可承受重量 求weight中可以装进背包的最大质量
  * 举例: weight: 2, 2, 3  w: 5
  *     质量 0 1 2 3 4 5          0 1 2 3 4 5         0 1 2 3 4 5         0 1 2 3 4 5 
  * 物品0(2) 0 0 0 0 0 0  i=0 0(2)1 0 1 0 0 0 i=1 0(2)1 0 1 0 0 0 i=2 0(2)1 0 1 0 0 0
@@ -328,3 +328,64 @@ bool canPartition(vector<int>& nums) {//和回溯解法略不同
   }
   return states[sum];
 }
+
+
+/***************************************
+ * DP NO.002
+ * minimum-path-sum 棋盘最短距离：求棋盘起点到终点的最短路径，每次只能往下或者往后走一步。
+ *
+ * 1, 3, 1
+ * 1, 5, 1  --> 7 : 1,3,1,1,1
+ * 4, 2, 1  
+ * 
+ * 回溯或者DP来解(distance[i,j]只和distance[i-1,j],distance[i,j-1]有关,所以可以用DP)
+ * 状态转换方程: d[i,j] = min(d[i-1][j], d[i][j-1]) + grid[i][j]; 第一行、第一列单独算 
+ ***************************************/
+int minPathSum(vector<vector<int>>& grid) {
+  if (grid.size() == 0 || grid[0].size() == 0) {
+    return 0;
+  }
+  vector<vector<int>> res(grid.size(), vector<int>(grid[0].size(), 0));
+  res[0][0] = grid[0][0]; // 初始化(0,0), 需要加grid.size()判断
+  for (int i = 1; i < (int)grid.size(); i++) { //初始化第一行距离
+    res[i][0] = res[i-1][0] + grid[i][0]; 
+  }
+  for (int j = 1; j < (int)grid[0].size(); j++) { //初始化第一列距离
+    res[0][j] = res[0][j-1] + grid[0][j];
+  }
+  for (int i = 1; i < grid.size(); i++) { //DP方程
+    for (int j = 1; j < grid[i].size(); j++) {
+	res[i][j] = min(res[i-1][j], res[i][j-1]) + grid[i][j];
+    }
+  }
+  return res[grid.size() - 1][grid[0].size() - 1]; //返回注意需要加grid.size()判断在最开始
+}
+// 回溯解法,下面解法会超时，需要通过备忘录来避免重复状态的计算，但是这里的状态是(i,j,distance),
+// distance需要可以枚举才可以，题目没有说明，不过可以将i,j --> id=i*j+j key为id,然后set值存distance,
+// 没有访问过的状态不在, id对应的set中，不过比较麻烦，这种优先使用DP来解。
+int minPathSum(vector<vector<int>>& grid) {
+  if (grid.size() == 0 || grid[0].size() == 0) {
+    return 0;
+  }
+  int minVal = INT_MAX;
+  find(grid, 0, 0, minVal, 0);
+  return minVal;
+}
+void find(vector<vector<int>>& grid, int i, int j, int& minVal, int distance) {
+  if (i == grid.size() - 1 && j == grid[i].size() - 1) {
+    minVal = min(minVal, distance + grid[i][j]);
+    return;
+  }
+  if (i >= grid.size() || j >= grid[i].size()) {
+    return;
+  }
+  find(grid, i+1, j, minVal, distance + grid[i][j]);
+  find(grid, i, j+1, minVal, distance + grid[i][j]);
+}
+
+
+/***************************************
+ * DP NO.003
+ *
+ ***************************************/
+
