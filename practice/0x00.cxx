@@ -164,7 +164,7 @@ bool canPartition(vector<int>& nums) {
   for (auto num : nums) {
     sum += num;
   }
-  sum /= 2;
+  sum /= 2; // 找nums中数不超过sum的最大值，如果是sum/2就是true，背包问题变种.
   vector<vector<int>> mem(nums.size(), vector<int>(20000, -1)); // 20000是所有物品重量加起来的最大值
   double maxVal = LONG_MIN;
   find(nums, 0, 0, sum, mem, maxVal); 
@@ -270,5 +270,55 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
  * partition-equal-subset-sum (0-1背包问题变种) 
  * 
  * 0-1背包
- *    
+ * weight:物品重量 n:物品个数 w:背包可承受重量
+ * int knapsack(vector<int> weight, int n, int w) {
+ *   vector<vector<bool>> states(n, vector<int>(w + 1, false));
+ *   states[0][0] = true;
+ *   if (weight[0] <= w) states[0][weight[0]] = true;  
+ *   for (int i = 1; i < n; i++) {
+ *     for (int k = 0; k <= w; k++) {
+ *       if (states[i-1][k]] == true) { 
+ *         states[i][k] = true; // 不装第i个物品
+ *         if (k <= w - weight[i]) {
+ *           states[i][k + weight[i]] == true; // 装第i个物品
+ *         }
+ *       }
+ *     }
+ *   }
+ *   for (int i = w; i >= 0; i++) { // 输出结果
+ *     if (states[n-1][i] == true) return i; 
+ *   }
+ * }
+ * 
+ * 状态压缩版本：下一层的状态依赖于上一层而不需要再之前的层的状态，所以可以用一个一维数组存储状态
+ * int knapsack(vector<int> weight, int , int w) {
+ *   vector<bool> states(w + 1, false);
+ *   states[0] = true; 
+ *   if (weight[0] <= w) states[weight[0]] = true;
+ *   for (int i = 1; i < n; i++) {
+ *     for (int j = w - weight[i]; j >= 0; j--) {
+ *       if (states[j] == true) states[j + weight[i]] = true;
+ *     }    
+ *   }
+ *   for (int i = w; i >= 0; i++) {
+ *     if (states[i] == true)  return i;
+ *   }
+ * }  
  ***************************************/
+bool canPartition(vector<int>& nums) {//和回溯解法略不同
+  int sum = 0;
+  for (auto n : nums) {
+    sum += n;
+  }        
+  if (sum & 1 != 0) return false; //如果和不是偶数一半是小数，不可能有整数的和是小数
+  sum /= 2; 
+  vector<bool> states(sum + 1, false);
+  states[0] = true;
+  if (states[nums[0]] <= sum) states[nums[0]] == true;
+  for (int i = 1; i < nums.size(); i++) {
+    for (int j = sum - nums[i]; j >= 0; j--) {
+      if (states[j] == true) states[j + nums[i]] = true; 
+    }
+  }
+  return states[sum];
+}
