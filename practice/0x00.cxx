@@ -261,9 +261,15 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
 
 二、动态规划
   NO.001 0-1背包
-
-
+  NO.002 棋盘最短距离
+  NO.003 找零钱问题
+ 
 1. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
+2. 背包类问题根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
+3. 找零钱累问题根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
+4. 确定是背包类问题还是找零钱类问题的方法是看结果是否和输入数据的下标有关系,有关系切无后效性(f(i+1)只和f(i)有关系)就是背包类，否则
+   是找零钱类。背包类问题回溯备忘录只需要记录是否走过，找零钱类问题需要记录具体的值,递归需要返回值。
+5. 找零钱类问题需要用多个值来标记状态：访问过，没有值，有值...
 
 /***************************************
  * DP NO.001
@@ -386,6 +392,62 @@ void find(vector<vector<int>>& grid, int i, int j, int& minVal, int distance) {
 
 /***************************************
  * DP NO.003
- *
+ * coin-change
+ * 
+ * 找零钱问题 首先是回溯解法 回溯通过结果目标值来递归，即要找的钱数
+ * 如果有1,2,3面值的钱，要求找6的最少硬币数：
+ * f(6) = min{f(6-c1), f(6-c2), f(6-c3)} + 1
+ *      = min{f((6-1)), f(6-2), f(6-3)} + 1
+ *      = min{f(5), f(4), f(3)} + 1 = ...
+ * f(3) = min{f(2), f(1), f(0)) + 1
+ * f(4) = ... f(5) = ...
+ * f(2) = min{f(1), f(0), f(-1)} + 1  
+ * f(0) = 0 f(小于0) = -1 
  ***************************************/
+int coinChange(vector<int>& coins, int amount) {
+  // 注意要记录状态：没有访问0  找不开-1  找开了>0
+  vector<int> res(amount + 1, 0); //这里存在f(6)，下标从0开始，需要数组大小+1        
+  return find(coins, amount, res); 
+}
+int find(vector<int>& coins, int aim, vector<int>& res) {
+  if (aim < 0) { // 找不开
+    return -1;
+  }
+  if (aim == 0) { // 找开了
+    return 0;
+  }
+  if (res[aim] != 0) { // 已经计算过了,直接返回值
+    return res[aim]; 
+  }
+  int minVal = INT_MAX;
+  for (auto c : coins) {
+    int r = find(coins, aim - c, res);
+    if (r != -1) { // 注意找不开回返回-1,不能计入结果
+      minVal = min(r, minVal);
+    }
+  }
+  if ( minVal != INT_MAX) { //防止coins空的时候返回INT_MAX 
+    res[aim] = minVal + 1;
+  }else { // 找不开
+    res[aim] = -1;
+  }
+  return res[aim];
+}
 
+int coinChange(vector<int>& coins, int amount) {
+  vector<int> res(amount + 1, 0);
+  for (int i = 1; i <= amount; i++) {
+    int minVal = INT_MAX;
+    for (auto c : coins) {
+      if ((i - c) >= 0 && res[i-c] != -1) { // 找不开就不计入最小结果计算
+        minVal = min(minVal, res[i-c]);   
+      }
+    }
+    if (minVal != INT_MAX) {
+      res[i] = minVal + 1;
+    }else { // 这里一定要注意找不开的时候也要赋值，因为题目要求不匹配为-1，初始化的是0
+      res[i] = -1;
+    } 
+  }
+  return res[amount];
+}
