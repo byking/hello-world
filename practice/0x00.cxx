@@ -261,9 +261,10 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
 
 二、动态规划
   NO.001 0-1背包
-  NO.002 棋盘最短距离
+  NO.002 棋盘最短距离[0-1背包类]
   NO.003 找零钱问题
- 
+  NO.004 三角形顶到底最小距离[0-1背包类]
+  
 1. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
 2. 背包类问题根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
 3. 找零钱累问题根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
@@ -450,4 +451,35 @@ int coinChange(vector<int>& coins, int amount) {
     } 
   }
   return res[amount];
+}
+
+
+/***************************************
+ * DP NO.004
+ * triangle 三角形从顶到底最短距离, 每次只能往下一层相邻节点走
+ * f(i,j) = min{f(i-1, j), f(i-1, j-1)} + a(i, j) 所以两边要特殊处理
+ * 下一层只和上一层状态相关，所以可以状态压缩，状态是距离
+ ***************************************/
+int minimumTotal(vector<vector<int>>& triangle) {
+  if (triangle.size() <= 0 || triangle[triangle.size() - 1].size() <= 0) {
+    return 0;
+  }
+  vector<int> res(triangle[triangle.size()-1].size(), 0);
+  res[0] = triangle[0][0];
+  for (int i = 1; i < triangle.size(); i++) {
+    for (int j = triangle[i].size() - 1; j >= 0; j--) {
+      if (j == triangle[i].size() - 1) {
+        res[j] = res[j-1] + triangle[i][j];
+      }else if (j > 0 && j < triangle[i].size() - 1) {
+        res[j] = min(res[j-1], res[j]) + triangle[i][j]; 
+      }else {
+        res[j] = res[j] + triangle[i][j];
+      } 
+    }
+  }
+  int minVal = INT_MAX;
+  for (auto v : res) {
+    minVal = min(minVal, v);
+  }  
+  return minVal;
 }
