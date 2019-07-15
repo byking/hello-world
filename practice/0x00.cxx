@@ -267,7 +267,7 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
   
 1. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
 2. 背包类问题根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
-3. 找零钱累问题根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
+3. 找零钱类问题根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
 4. 确定是背包类问题还是找零钱类问题的方法是看结果是否和输入数据的下标有关系,有关系切无后效性(f(i+1)只和f(i)有关系)就是背包类，否则
    是找零钱类。背包类问题回溯备忘录只需要记录是否走过，找零钱类问题需要记录具体的值,递归需要返回值。
 5. 找零钱类问题需要用多个值来标记状态：访问过，没有值，有值...
@@ -483,3 +483,46 @@ int minimumTotal(vector<vector<int>>& triangle) {
   }  
   return minVal;
 }
+
+/***************************************
+ * DP NO.005
+ * maximum-product-subarray 最大乘积子数组[连续subarray]
+ * 0-1背包类问题，可以通过下标递归状态且是无后效性的：当前的数是正数，当前值为前一个数记录的正的最大值*当前的数;
+ * 当前的数如果是负数，当前的值为前一个数记录的负的最小值*当前的数:
+ * F(i) = f(i-1).positveMax * a[i] if(a[i] >= 0) f(i).positiveMax = f(i-1).positiveMax*a[i] f(i).negativeMin = f(i-1).negativeMin*a[i]
+ *      = f(i-1).negativeMin * a[i] if (a[i] <= 0) f(i).posiveMax = f(i-1).negativeMin*a[i] f(i).negativeMin = f(i-1).positiveMax*a[i]
+ * 注意：int相乘需要用double存; 注意前一个数的计算最大最小值为0的情况 
+ * **************************************/
+int maxProduct(vector<int>& nums) {
+  if (nums.size() <= 0) {
+    return 0;
+  }
+  if (nums.size() == 1) {
+    return nums[0];
+  }  
+  vector<vector<double>> res(nums.size(), vector<double>(2, 0));
+  if (nums[0] >= 0) {
+    res[0][0] = nums[0];
+    res[0][1] = 0;
+  }
+  if (nums[0] <= 0) {
+    res[0][0] = 0;
+    res[0][1] = nums[0]; 
+  }
+  for (int i = 1; i < nums.size();  i++) {
+    if (nums[i] >= 0) {
+      res[i][0] = max((double)nums[i], res[i-1][0] * nums[i]); //注意这里最好用max 支持输入是分数的情况，另外就是前一个数res==0的情况
+      res[i][1] = min((double)nums[i], res[i-1][1] * nums[i]); //注意这里最好用min
+    }
+    if (nums[i] <= 0) {
+      res[i][0] = max((double)nums[i], res[i-1][1] * nums[i]);
+      res[i][1] = min((double)nums[i], res[i-1][0] * nums[i]);
+    }
+  }
+  double maxVal = LONG_MIN;
+  for (auto r : res) {
+    maxVal = max(r[0], maxVal);
+  }
+  return maxVal;
+}
+
