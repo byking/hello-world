@@ -526,3 +526,33 @@ int maxProduct(vector<int>& nums) {
   return maxVal;
 }
 
+/***************************************
+ * DP NO.006
+ * longest-increasing-subsequence 最长递增子序列 [0-1背包类问题]
+ * 根据下标递归满足无后效性, if(a[i] > a[i-1]) f(i) = f(i-1) + 1 else f(i) = f(i-1) 
+ * f(i)最终值为之前元素之行上面公式的最大值
+ * **************************************/
+int lengthOfLIS(vector<int>& nums) {
+  if (nums.size() <= 0) {
+    return 0;
+  } 
+  if (nums.size() == 1) {
+    return 1;
+  } 
+  vector<int> res(nums.size(), 1);
+  int maxVal = INT_MIN;
+  for (int i = 1; i < nums.size(); i++) {
+    int maxV = INT_MIN;
+    for (int j = 0; j < i; j++) {
+      if (nums[i] > nums[j]) {
+        maxV = max(res[j] + 1, maxV);
+      }else {
+        maxV = max(res[j], maxV);
+      }
+    }
+    res[i] = maxV;
+    maxVal = max(res[i], maxVal);
+  }
+  return maxVal; 
+}
+
