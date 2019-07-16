@@ -260,11 +260,14 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
 
 
 二、动态规划
-  NO.001 0-1背包
+  NO.001 0-1背包 "类型一"
   NO.002 棋盘最短距离[0-1背包类]
-  NO.003 找零钱问题
+  NO.003 找零钱问题 "类型二"
   NO.004 三角形顶到底最小距离[0-1背包类]
-  
+  NO.005 最大乘积子数组[0-1背包类]
+  NO.006 最长递增子序列[0-1背包类]
+  NO.007 最长公共子数组"类型三" 
+
 1. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
 2. 背包类问题根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
 3. 找零钱类问题根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
@@ -556,3 +559,33 @@ int lengthOfLIS(vector<int>& nums) {
   return maxVal; 
 }
 
+/***************************************
+ * DP NO.007
+ * Maximum length of Repeated Subarray (max common subarray)
+ * 状态转移是二维的，主要输入是两个数组
+ * f(i,j) = f(i-1, j-1) if (a[i] != b[j])
+ *        = f(i-1, j-1) + 1 if (a[i] == b[j])
+ * 初始第一行、第一列需要单独计算 
+ * 可以状态压缩，使用一维数组来保存上一层的状态 时间复杂度o(m*n),空间复杂度O(min(m*n))
+ ****************************************/
+int findLength(vector<int>& A, vector<int>& B) {
+  vector<vector<int>> res(A.size(), vector<int>(B.size(), 0));
+  int maxVal = INT_MIN;
+  for (int i = 0; i < (int)A.size(); i++) { // 注意size()是无符号，-1操作空的时候会越界
+    for (int j = 0; j < (int)B.size(); j++) 
+      if (i == 0 || j == 0) {
+        if (A[i] == B[j]) {
+	  res[i][j] = 1;
+	}
+      }else {
+        if (A[i] == B[j]) {
+	  res[i][j] = res[i-1][j-1] + 1;
+	}else {
+	  res[i][j] = res[i-1][j-1];
+	}
+      }
+      maxVal = max(maxVal, res[i][j]);
+    }
+  }
+  return maxVal;
+}
