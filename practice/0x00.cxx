@@ -278,8 +278,7 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
 6. 对于f(i)需要通过f(i-1)计算的情况，可以安排哨兵，用于计算结果的res可以申请为input.size()+1，这样res[0]就可以作为哨兵，不担心越界
    或者可以对边界单独计算,如题NO.007 NO.008
 7. 对于maxVal minVal的初始化，要根据题目的情况来，例如最长、最大子串、序列等初始为0即可。
-8. 子串、子数组一般说连续的，子序列一般不连续.
-
+8. 子序列:subsequence不连续, subarray子数组、子串是连续的。不连续的情况f(i)的值不满足的条件的时候需要初始化，不能继承f(i-1)的值
 /***************************************
  * DP NO.001
  * partition-equal-subset-sum (0-1背包问题变种) 
@@ -537,7 +536,7 @@ int maxProduct(vector<int>& nums) {
 /***************************************
  * DP NO.006
  * longest-increasing-subsequence 最长递增子序列 [0-1背包类问题]
- * 根据下标递归满足无后效性, if(a[i] > a[i-1]) f(i) = f(i-1) + 1 else f(i) = f(i-1) 
+ * 根据下标递归满足无后效性, if(a[i] > a[i-1]) f(i) = f(i-1) + 1 else f(i) = f(i-1) | f(i) = 0可以计算连续
  * f(i)最终值为之前元素之行上面公式的最大值
  * **************************************/
 int lengthOfLIS(vector<int>& nums) {
@@ -566,30 +565,27 @@ int lengthOfLIS(vector<int>& nums) {
 
 /***************************************
  * DP NO.007
- * Maximum length of Repeated Subarray (max common subarray)
+ * maximum-length-of-repeated-subarray (max common subarray)
  * 状态转移是二维的，主要输入是两个数组
- * f(i,j) = f(i-1, j-1) if (a[i] != b[j])
+ * f(i,j) = 0 注意这里不能等于:f(i-1, j-1)如果等于就会得出不连续的公共长度 if (a[i] != b[j])
  *        = f(i-1, j-1) + 1 if (a[i] == b[j])
  * 初始第一行、第一列需要单独计算 
- * 可以状态压缩，使用一维数组来保存上一层的状态 时间复杂度o(m*n),空间复杂度O(min(m*n))
+ * 不可以状态压缩，使用一维数组来保存上一层的状态,需要j从后往前算，但是此题中从后往前字符串就相当于变了. 0111 != 1110
+ * 匹配的最大公共子串也会变
  ****************************************/
 int findLength(vector<int>& A, vector<int>& B) {
   vector<vector<int>> res(A.size(), vector<int>(B.size(), 0));
-  int maxVal = INT_MIN;
+  int maxVal = 0; // 这里maxVal 0 不是INT_MIN，避免都不匹配的时候返回INT_MIN
   for (int i = 0; i < (int)A.size(); i++) { // 注意size()是无符号，-1操作空的时候会越界
-    for (int j = 0; j < (int)B.size(); j++) 
-      if (i == 0 || j == 0) {
-        if (A[i] == B[j]) {
+    for (int j = 0; j < (int)B.size(); j++) {
+      if (A[i] == B[j]) {
+        if (i == 0 || j == 0) {
 	  res[i][j] = 1;
-	}
-      }else {
-        if (A[i] == B[j]) {
-	  res[i][j] = res[i-1][j-1] + 1;
 	}else {
-	  res[i][j] = res[i-1][j-1];
+	  res[i][j] = res[i-1][j-1] + 1;
 	}
+        maxVal = max(maxVal, res[i][j]);
       }
-      maxVal = max(maxVal, res[i][j]);
     }
   }
   return maxVal;
