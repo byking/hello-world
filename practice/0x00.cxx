@@ -266,7 +266,8 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
   NO.004 三角形顶到底最小距离[0-1背包类]
   NO.005 最大乘积子数组[0-1背包类]
   NO.006 最长递增子序列[0-1背包类]
-  NO.007 最长公共子数组"类型三" 
+  NO.007 最长公共子数组 最长公共子串"类型三" 
+  NO.008 两个字符串问最少改动多少两个字符串可以一样 最长公共子序列"类型三"
 
 1. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
 2. 背包类问题根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
@@ -274,6 +275,10 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
 4. 确定是背包类问题还是找零钱类问题的方法是看结果是否和输入数据的下标有关系,有关系切无后效性(f(i+1)只和f(i)有关系)就是背包类，否则
    是找零钱类。背包类问题回溯备忘录只需要记录是否走过，找零钱类问题需要记录具体的值,递归需要返回值。
 5. 找零钱类问题需要用多个值来标记状态：访问过，没有值，有值...
+6. 对于f(i)需要通过f(i-1)计算的情况，可以安排哨兵，用于计算结果的res可以申请为input.size()+1，这样res[0]就可以作为哨兵，不担心越界
+   或者可以对边界单独计算,如题NO.007 NO.008
+7. 对于maxVal minVal的初始化，要根据题目的情况来，例如最长、最大子串、序列等初始为0即可。
+8. 子串、子数组一般说连续的，子序列一般不连续.
 
 /***************************************
  * DP NO.001
@@ -589,3 +594,49 @@ int findLength(vector<int>& A, vector<int>& B) {
   }
   return maxVal;
 }
+
+/***************************************
+ * DP NO.008
+ * delete-operation-for-two-strings (longest common sequence LCS) 两个字符串一次操作可以删除一个字符，
+ * 问多少个操作可以使两个字符串相同，其实是LCS问题
+ * 状态转移是二维的，主要是因为输入是两个数组
+ * f(i, j) = f(i-1, j-1) + 1 if (a[i] == b[j])
+ *         = max(f(i-1,j), f(i, j-1)) if (a[i] != b[j]) 
+ ****************************************/
+int minDistance(string word1, string word2) {
+  vector<vector<int>> res(word1.size() + 1, vector<int>(word2.size() + 1, 0));
+  int maxVal = 0; // LCS大小 
+  for (int i = 1; i <= (int)word1.size(); i++) {
+    for (int j = 1; j <= (int)word2.size(); j++) {
+      if (word1[i-1] == word2[j-1]) { // 加入哨兵后res[i]对应input[i-1]
+        res[i][j] = res[i-1][j-1] + 1;
+      }else {
+	res[i][j] = max(res[i-1][j], res[i][j-1]);
+      }
+    }
+  }
+  if (word1.size() == 0 || word2.size() == 0) {
+    return word1.size() + word2.size();
+  }
+  maxVal = res[word1.size()][word2.size()];
+  // 输出LCS内容
+  //int i = word1.size(); 
+  //int j = word2.size();
+  //while (i >= 1 && j >= 1) {
+  //  if (word1[i-1] == word2[j-1]) {
+  //    lcs.push(word1[i-1]);
+  //    i--;
+  //    j--;
+  //  }else if (res[i-1][j] >= res[i][j-1]) {
+  //    i--;
+  //  }else {
+  //    j--;
+  //  }
+  // }
+  //while (!lcs.empty()) {
+  //  cout << lcs.top();
+  //  lcs.pop();
+  //}  
+  return (word1.size() - maxVal + word2.size() - maxVal); 
+}
+
