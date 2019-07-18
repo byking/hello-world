@@ -574,15 +574,15 @@ int lengthOfLIS(vector<int>& nums) {
  * 匹配的最大公共子串也会变
  ****************************************/
 int findLength(vector<int>& A, vector<int>& B) {
-  vector<vector<int>> res(A.size(), vector<int>(B.size(), 0));
+  vector<vector<int>> res(A.size() + 1, vector<int>(B.size() + 1, 0));
   int maxVal = 0; // 这里maxVal 0 不是INT_MIN，避免都不匹配的时候返回INT_MIN
-  for (int i = 0; i < (int)A.size(); i++) { // 注意size()是无符号，-1操作空的时候会越界
-    for (int j = 0; j < (int)B.size(); j++) {
-      if (A[i] == B[j]) {
-        if (i == 0 || j == 0) {
+  for (int i = 1; i <= (int)A.size(); i++) { // 注意size()是无符号，-1操作空的时候会越界
+    for (int j = 1; j <= (int)B.size(); j++) {
+      if (A[i-1] == B[j-1]) {
+        if (i == 1 || j == 1) {
 	  res[i][j] = 1;
 	}else {
-	  res[i][j] = res[i-1][j-1] + 1;
+	  res[i][j] = res[i-1][j-1] + 1; //这有i-1,i不能从0开始，从1开始，res需要input.size()+1, input的访问需要-1对应
 	}
         maxVal = max(maxVal, res[i][j]);
       }
