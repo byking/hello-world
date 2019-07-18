@@ -1,14 +1,19 @@
 /* https://leetcode.com/problems/xxx */
 
 回溯编码问题&技巧:
-1. 函数必须显示return.
-2. balance法见回溯NO.001 checkValid函数:遍历记录.
-3. 行:row; 列:col; 初始的输入:input.
-4. 回溯问题都可以分成多个层，每一层都有多个状态，通过递归+回溯可以枚举所有状态(遍历完所有的层) 
-   有的是字符串的一位为一层，有的是二位数组的每一行是一层，每一层都有多种取值可能性。
-5. 过程中可以发掘一些条件来剪枝这样可以减少重复判断，有些情况在中途判断最后的结果即可用，有些情况
-   中途的判断不能完全决定满足解的条件，还需要最后遍历完所有的层后再次校验是否满足解的条件。
-6. 可以使用备忘录来记录走过的状态，这样可以避免更多重复计算，但是比较适合每一层的状态好传递记录的情况，
+0. 回溯一般使用递归实现.
+1. 回溯问题都可以分成多个阶段(阶段类似于树的层), 每一阶段(层)都有多个状态，通过回溯可以枚举所有状态(遍历完所有层上的状态). 
+   阶段的划分：1) 数组的一位(步)为一层；2) 二维数组的一行为一层; 3) 棋盘上一步(对应多个点)为一层, 例如(i+1,j)(i,j+1):斜线; 4)一个输入值
+   作为一个状态，例如爬楼梯(楼梯层数)、找零钱（目标钱）、斐波那契等(目标数). 
+2. 一般需要执行完所有的阶段后才能得出结果(类似于从根结点到所有的叶子结点), 可以挖掘一些剪枝条件，在执行过程避免已经不满足条件的阶段状态
+   继续执行, 来减少重复计算. 有些情况例如8皇后过程中的剪枝就是满足最后结果的条件，所以阶段结束是的状态就是结果；有些情况例如括号匹配问题
+   过程剪枝但是最后阶段的状态也需要校验是否满足结果条件. 有些时候不能立刻想到剪枝条件可以在最后阶段再校验状态是否满足结果,例如括号匹配问
+   题的第一种解法.
+3. 备忘录: 可以使用备忘录来记录走过的状态，从而达到剪枝的效果来避免重复计算，但是比较适合每一层的状态好传递记录的情况(即递归函数不用返回
+   值来记录到备忘录中, 状态一层一层传递到最后阶段后会被算入结果中，这样备忘录只需要记录:访问过|没有访问过 两种状态即可，如果最终结果是判
+   断是否有符合条件的结果即返回true|false 则需要记录三种状态：访问过有结果|访问过没有结果|没有访问过 三种状态). 否则返回值会比较难设计，
+   因为有返回值的话一层的一个状态会对应多个叶子结点状态，需要都记录或者pk出一个，从备忘录拿出状态还要继续加入上层的结果中，会比较麻烦.
+   一般备忘录就参照背包问题即可(叶子状态都会和一个值比较来记录或者直接记录)，当然使用DP就不需要考虑这些. 
    例如0-1背包问题中，items(2,2,2)    f(0,0)
                                    /         \
 			       f(1,0)        f(1,2)
@@ -16,12 +21,14 @@
 		          f(2,0)  f[2,2]    f[2,2]   f(2,4)
 		          /  \    /   \      /   \    /   \
 	               (3,0)[3,2][3,2]{3,4}[3,2]{3,4}{3,4}(3,6)     
-   初始化的时候(0,0)0位的时候有选+不选两种(1,0) (1,2),1位的时候有四种，其中有重复的[2,2]，[2,2]最终得倒的
+   初始化的时候(0,0)0位的时候有选+不选两种(1,0) (1,2),1位的时候有四种，其中有重复的[2,2]，[2,2]最终得到的
    maxVal相同，因此用mem记录算过的状态,状态相同的就不计算了。注意这里f[2,2]的值与是否来自f(1,0) f(1,2)无
-   关，f[2,2]最终都算出同一个值, 递归是自定向下，结果在叶子结点，而f(1,0) f(1,2)对应的f[2,2]最终叶子结点值
+   关，f[2,2]最终都算出同一个值, 递归是自顶向下，结果在叶子结点，而f(1,0) f(1,2)对应的f[2,2]最终叶子结点值
    相同。还有一种记录状态：没访问过的为初始值，访问过的记录为最终多个叶子结点的pk的一个结果，这种需要递归
    函数返回值，而且多个叶子结点的值也需要pk出一个，一般不推荐这样做，比较复杂。
-7. 步骤：明确结束条件，遍历层，遍历层上不同状态，添加剪枝条件.
+4. 步骤：明确结束条件，遍历层，遍历层上不同状态，添加剪枝条件.
+5. balance法见回溯NO.001 checkValid函数:遍历记录.
+6. 行:row; 列:col; 初始的输入:input.
 
 一、回溯
   NO.001 列举左右括号匹配情况
@@ -95,7 +102,7 @@ void find(string& input, int pos, int leftP, int rightP, vector<string>& res) {
  ***************************************/
 vector<vector<string>> solveNQueens(int n) {
   vector<vector<string>> res;
-  vector<string> input(n,string(n, '.')); // 注意:不用'='初始化
+  vector<string> input(n, string(n, '.')); // 注意:不用'='初始化
   find(input, 0, res);
   return res;
 }
@@ -116,7 +123,7 @@ void find(vector<string>& input, int row, vector<vector<string>>& res) {
 }
 
 bool checkValid(vector<string>& input, int row, int col) {
-  for (int i = row - 1; i >=0; i--) {
+  for (int i = row - 1; i >= 0; i--) {
     if (input[i][col] == 'Q') {
       return false;
     }
@@ -137,7 +144,7 @@ bool checkValid(vector<string>& input, int row, int col) {
 
 /***************************************
  * 回溯 NO.003
- * partition-equal-subset-sum (0-1背包问题变种) 
+ * partition-equal-subset-sum 在数组中能否找到一些数的和正好是数组所有数据和的一半 (0-1背包问题变种) 
  * 0-1背包问题: 
  * int maxVal = INT_MIN;
  * // vector<vector<int>> mem(item.size(), vector<int>(totalSumOfItems, -1));
@@ -195,9 +202,11 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
  * rmatch(0, 0, text, pattern, match); // text文本 pattern正则
  * void rmatch(int ti, int pi, string text, string pattern, bool& match) {
  *   if (match == true) return; // 注意这里必须，要不可能会被其他false结果覆盖
- *   if (pi == pattern.length() || ti == text.lenght()) {
- *     match = ((pi == pattern.length()) && ti == text.length());
- *     return match;
+ *   if (pi == pattern.length()) { // 正则匹配要以pattern结束作为结束条件，因为pattern中一个char可以匹配text中多个char, 只是text结束不能结束
+ *     if (ti == text.length()) {
+ *       match == true;
+ *     }
+ *     return;
  *   }
  *   if (pattern[pi] == '*') {
  *     for (int i = 0; i <= text.lenght() - ti; i++) {
@@ -230,8 +239,8 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
   if (pi == pattern.length()) {
     if (ti == text.length()) {
       match = true;
-      return;
     }
+    return;
   }   
   if (pattern[pi] == '.') {
     rMatch(text, pattern, ti + 1, pi + 1, match);
