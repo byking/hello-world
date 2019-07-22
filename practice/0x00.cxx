@@ -202,7 +202,7 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
  * rmatch(0, 0, text, pattern, match); // text文本 pattern正则
  * void rmatch(int ti, int pi, string text, string pattern, bool& match) {
  *   if (match == true) return; // 注意这里必须，要不可能会被其他false结果覆盖
- *   if (pi == pattern.length()) { // 正则匹配要以pattern结束作为结束条件，因为pattern中一个char可以匹配text中多个char, 只是text结束不能结束
+ *   if (pi == pattern.length()) { // 正则匹配要以pattern结束作为结束条件
  *     if (ti == text.length()) {
  *       match == true;
  *     }
@@ -216,7 +216,7 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
  *     rmatch(ti, pi + 1, text, pattern, match);
  *     rmatch(ti + 1, pi + 1, text, pattern, match);
  *   }else {
- *     if (text[ti] == pattern[pi]) {
+ *     if (ti < text.length() && text[ti] == pattern[pi]) {
  *       rmatch(ti + 1, pi + 1, text, pattern, match);
  *     }  
  *   }
@@ -278,9 +278,10 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
   NO.007 最长公共子数组 最长公共子串"类型三" 
   NO.008 两个字符串问最少改动多少两个字符串可以一样 最长公共子序列"类型三"
 
-1. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
-2. 背包类问题根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
-3. 找零钱类问题根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
+0. 回溯是递归+备忘录，自顶向下的计算(叶子结点才是结果); DP是for遍历，自底向上的计算(每一步都是结果)，需要定义状态及状态转移方程
+1. [背包类问题]根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
+2. [找零钱类问题]根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
+3. [最长公共子数组/子序列类问题], 二维的点为每一步,状态为当前点对应的结果.
 4. 确定是背包类问题还是找零钱类问题的方法是看结果是否和输入数据的下标有关系,有关系切无后效性(f(i+1)只和f(i)有关系)就是背包类，否则
    是找零钱类。背包类问题回溯备忘录只需要记录是否走过，找零钱类问题需要记录具体的值,递归需要返回值。
 5. 找零钱类问题需要用多个值来标记状态：访问过，没有值，有值...
@@ -507,7 +508,7 @@ int minimumTotal(vector<vector<int>>& triangle) {
  * 当前的数如果是负数，当前的值为前一个数记录的负的最小值*当前的数:
  * F(i) = f(i-1).positveMax * a[i] if(a[i] >= 0) f(i).positiveMax = f(i-1).positiveMax*a[i] f(i).negativeMin = f(i-1).negativeMin*a[i]
  *      = f(i-1).negativeMin * a[i] if (a[i] <= 0) f(i).posiveMax = f(i-1).negativeMin*a[i] f(i).negativeMin = f(i-1).positiveMax*a[i]
- * 注意：int相乘需要用double存; 注意前一个数的计算最大最小值为0的情况 
+ * 注意：int相乘需要用double存; 注意前一个数的计算最大最小值为0的情况，这样乘以当前数会变0，最大值应该是当前数. 
  * **************************************/
 int maxProduct(vector<int>& nums) {
   if (nums.size() <= 0) {
@@ -556,7 +557,7 @@ int lengthOfLIS(vector<int>& nums) {
     return 1;
   } 
   vector<int> res(nums.size(), 1);
-  int maxVal = INT_MIN;
+  int maxVal = INT_MIN; // 设置为1 就可以去掉上面nums.size() == 1的判断
   for (int i = 1; i < nums.size(); i++) {
     int maxV = INT_MIN;
     for (int j = 0; j < i; j++) {
