@@ -230,7 +230,9 @@ void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vecto
  * 是'*'就需要处理作废当前pattern的情况；如果是字符就看是否相等，也要处理
  * 下一个pattern是'*'的时候作废当前pattern的情况.
  *  如果当前是'*',需要枚举pattern中'*'前一个字符出现1-n的情况,0的情况在
- * '.'和字符的时候单独处理了. 
+ * '.'和字符的时候单独处理了.
+ * 注意'*'可以作废前一个pattern字符，所以当 aa b*aa也是匹配的，所以必须在
+ * 字符和.的时候考虑后一个是*的情况。 
  ***************************************/
 void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
   if (match == true) { // 注意一定要加，不然会被后面计算的不符合的情况覆盖结果
@@ -356,7 +358,7 @@ bool canPartition(vector<int>& nums) {//和回溯解法略不同
 
 /***************************************
  * DP NO.002
- * minimum-path-sum 棋盘最短距离：求棋盘起点到终点的最短路径，每次只能往下或者往后走一步。
+ * minimum-path-sum 棋盘最短距离：求棋盘起点到终点的最短路径，每次只能往下或者往前走一步。
  *
  * 1, 3, 1
  * 1, 5, 1  --> 7 : 1,3,1,1,1
@@ -455,7 +457,7 @@ int find(vector<int>& coins, int aim, vector<int>& res) {
 int coinChange(vector<int>& coins, int amount) {
   vector<int> res(amount + 1, 0);
   for (int i = 1; i <= amount; i++) {
-    int minVal = INT_MAX;
+    int minVal = INT_MAX; // 也可以minVal=-1
     for (auto c : coins) {
       if ((i - c) >= 0 && res[i-c] != -1) { // 找不开就不计入最小结果计算
         minVal = min(minVal, res[i-c]);   
@@ -589,11 +591,7 @@ int findLength(vector<int>& A, vector<int>& B) {
   for (int i = 1; i <= (int)A.size(); i++) { // 注意size()是无符号，-1操作空的时候会越界
     for (int j = 1; j <= (int)B.size(); j++) {
       if (A[i-1] == B[j-1]) {
-        if (i == 1 || j == 1) {
-	  res[i][j] = 1;
-	}else {
-	  res[i][j] = res[i-1][j-1] + 1; //这有i-1,i不能从0开始，从1开始，res需要input.size()+1, input的访问需要-1对应
-	}
+        res[i][j] = res[i-1][j-1] + 1; //这有i-1,i不能从0开始，从1开始，res需要input.size()+1, input的访问需要-1对应
         maxVal = max(maxVal, res[i][j]);
       }
     }
@@ -603,7 +601,7 @@ int findLength(vector<int>& A, vector<int>& B) {
 
 /***************************************
  * DP NO.008
- * delete-operation-for-two-strings (longest common sequence LCS) 两个字符串一次操作可以删除一个字符，
+ * delete-operation-for-two-strings (longest common sequence LCS) 两个字符串，一次操作可以删除一个字符，
  * 问多少个操作可以使两个字符串相同，其实是LCS问题
  * 状态转移是二维的，主要是因为输入是两个数组
  * f(i, j) = f(i-1, j-1) + 1 if (a[i] == b[j])
