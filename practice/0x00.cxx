@@ -644,3 +644,56 @@ int minDistance(string word1, string word2) {
   return (word1.size() - maxVal + word2.size() - maxVal); 
 }
 
+/***************************************
+ * DP NO.009
+ * edit-distance 两个字符串，最小编辑距离(可增/删/改),上题只能增删不可以改.
+ * 状态转移是二维的，主要是因为输入是两个数组
+ * 考虑: a[i] == b[j] 的时候编辑距离+0
+ *       a[i] != b[j] 的时候编辑距离可以将a[i]/b[j]删除,或者a[i]前加一个b[j]或者b[j]前加一个a[i]这种对应编辑距离+1 要不是a[i]后移要不是
+ *       b[j]后移一位，再或者将a[i]改成b[j]或者b[j]改成a[j]这种a[i] b[j]都后移一位，编辑距离+1
+ * f(i,j) = f(i-1, j-1) + 1 if (a[i] == b[j])
+ *        = min(f(i-1, j)+1, f(i, j-1)+1, f(i-1, j-1)+1) if (a[i] != b[j])
+ * 注意初始化：res[0][0] = 0 res[0][j] = j res[i][0] = i 空字符串到a[i]/b[j]的编辑距离等于i/j 
+ *
+ * 回溯:
+ * minDistacne = INT_MAX;
+ * find(0, 0, 0, minDistance, word1, word2);
+ * void find(int row, int col, int curDistance, int& minDistance, string& word1, string& word2) {
+ *   if (row == word1.size() || col == word2.size()) {
+ *     if (row < word1.size()) cutDistance += (word1.size() - row);
+ *     if (col < word2.size()) curDistance += (word2.size() - col);
+ *     minDistance = min(curDistance, minDistance);
+ *     return;
+ *   }
+ *   if (word1[row] == word2[col]) {
+ *     find(row + 1, col + 1, curDistance, minDistance, word1, word2);
+ *   }else {
+ *     find(row, col + 1, curDistance + 1, minDistance, word1, word2);//增删
+ *     find(row + 1, col, curDistance + 1, minDistance, word1, word2);//增删
+ *     find(row + 1, col + 1, curDistance + 1, minDistance, word1, word2); //修改
+ *   }
+ * }
+ ****************************************/
+int minDistance(string word1, string word2) {
+  if (word1.size() == 0 || word2.size() == 0) {
+    return max(word1.size(), word2.size());
+  }
+  vector<vector<int>> res(word1.size()+1, vector<int>(word2.size()+1, 0));
+  for (int i = 1; i <= word1.size(); i++) {
+    res[i][0] = i;
+  }
+  for (int j = 1; j <= word2.size(); j++) {
+    res[0][j] = j;
+  }
+  for (int i = 1; i <= word1.size(); i++) {
+    for (int j = 1; j <= word2.size(); j++) {
+      if (word1[i-1] == word2[j-1]) {
+        res[i][j] = res[i-1][j-1];
+      }else {
+        res[i][j] = min(res[i-1][j-1]+1, min(res[i-1][j]+1, res[i][j-1]+1));
+      }
+    }
+  }
+  return res[word1.size()][word2.size()];  
+}
+
