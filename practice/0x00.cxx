@@ -654,7 +654,7 @@ int minDistance(string word1, string word2) {
  * f(i,j) = f(i-1, j-1) + 1 if (a[i] == b[j])
  *        = min(f(i-1, j)+1, f(i, j-1)+1, f(i-1, j-1)+1) if (a[i] != b[j])
  * 注意初始化：res[0][0] = 0 res[0][j] = j res[i][0] = i 空字符串到a[i]/b[j]的编辑距离等于i/j 
- *
+ * 从最开始考虑,相等的情况不用考虑其他变换.
  * 回溯:
  * minDistacne = INT_MAX;
  * find(0, 0, 0, minDistance, word1, word2);
