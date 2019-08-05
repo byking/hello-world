@@ -172,13 +172,13 @@ bool canPartition(vector<int>& nums) {
     sum += num;
   }
   sum /= 2; // 找nums中数不超过sum的最大值，如果是sum/2就是true，背包问题变种.
-  vector<vector<int>> mem(nums.size(), vector<int>(20000, -1)); // 20000是所有物品重量加起来的最大值
+  vector<vector<double>> mem(nums.size(), vector<double>(20000, -1)); // 20000是所有物品重量加起来的最大值
   double maxVal = LONG_MIN;
   find(nums, 0, 0, sum, mem, maxVal); 
   return (maxVal == sum);
 }
 
-void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vector<int>>& mem, double& maxVal) {
+void find(vector<int>& nums, int pos, double curSum, double aimSum, vector<vector<double>>& mem, double& maxVal) {
   if (pos == (int)nums.size() || curSum == aimSum) {
     maxVal = max(curSum, maxVal); 
     return;  // 注意结束情况要return 
@@ -284,7 +284,7 @@ void rMatch(string& text, string& pattern, int ti, int pi, bool& match) {
 1. [背包类问题]根据输入数据(数组)下标递归，动态规划的状态转移方程f(x,y)=...其中x是下标y是状态,例如问题NO.001 NO.002
 2. [找零钱类问题]根据目标结果递归，动态规划的状态转移方程f(x)=...其中x是目前结果同时也是状态，例如问题NO.003
 3. [最长公共子数组/子序列类问题], 二维的点为每一步,状态为当前点对应的结果.
-4. 确定是背包类问题还是找零钱类问题的方法是看结果是否和输入数据的下标有关系,有关系切无后效性(f(i+1)只和f(i)有关系)就是背包类，否则
+4. 确定是背包类问题还是找零钱类问题的方法是看结果是否和输入数据的下标有关系,有关系且无后效性(f(i+1)只和f(i)有关系)就是背包类，否则
    是找零钱类。背包类问题回溯备忘录只需要记录是否走过，找零钱类问题需要记录具体的值,递归需要返回值。
 5. 找零钱类问题需要用多个值来标记状态：访问过，没有值，有值...
 6. 对于f(i)需要通过f(i-1)计算的情况，可以安排哨兵，用于计算结果的res可以申请为input.size()+1，这样res[0]就可以作为哨兵，不担心越界
@@ -346,7 +346,7 @@ bool canPartition(vector<int>& nums) {//和回溯解法略不同
   sum /= 2; 
   vector<bool> states(sum + 1, false);
   states[0] = true;
-  if (states[nums[0]] <= sum) states[nums[0]] == true;
+  if (nums[0] <= sum) states[nums[0]] == true;
   for (int i = 1; i < nums.size(); i++) {
     for (int j = sum - nums[i]; j >= 0; j--) {
       if (states[j] == true) states[j + nums[i]] = true; 
@@ -465,7 +465,7 @@ int coinChange(vector<int>& coins, int amount) {
     }
     if (minVal != INT_MAX) {
       res[i] = minVal + 1;
-    }else { // 这里一定要注意找不开的时候也要赋值，因为题目要求不匹配为-1，初始化的是0
+    } else { // 这里一定要注意找不开的时候也要赋值，因为题目要求不匹配为-1，初始化的是0
       res[i] = -1;
     } 
   }
