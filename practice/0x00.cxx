@@ -697,3 +697,40 @@ int minDistance(string word1, string word2) {
   return res[word1.size()][word2.size()];  
 }
 
+
+
+/***************************************
+ * DP NO.010
+ * longest-palindromic-substring 最长回文子串
+ * f(i,j) = true if (j - i < 3 && s[j] == s[i])
+ *        = true if (f(i+1, j-1) == true && s[j] == s[i])
+ *        = false else ...
+ * 由于f(i,j) 由得出 f(i+1, j-1) 所以需要先计算i+1层, 因此i需要从s.length()-1开始到0计算, 每一层j都比从i开始到s.length()
+ * 由于这j-1是i+1层的，所以j从小到大、从大到小算都可以，到i层的时候i+1层的j都计算完了.
+ * 如果要状态压缩的话j就必须从大到小计算，避免使用当前层的j覆盖上层的j
+ *
+ * 状态压缩版本:
+ * vector<bool> dp(s.length(), false);
+ * string substr = "";
+ * for (int i = s.length() - 1; i >= 0; i--) {
+ *   for (int j = s.length() - 1; j >= i; j--) {
+ *     dp[j] = (s[i] == s[j]) && (j - i < 3 || dp[j-1]);
+ *     if (dp[j] && (j - i + 1) > substr.length()) {/
+ *       substr = s.substr(i, j - i + 1);
+ *     }
+ *   }
+ * }
+ ****************************************/
+string longestPalindrome(string s) {
+  vector<vector<bool>> palindromeRecord(s.length(), vector<bool>(s.length(), false));
+  string subStr = "";
+  for (int i = s.length() - 1; i >= 0; i--) {
+    for (int j = i; j < s.length(); j++) {
+      palindromeRecord[i][j] = (s[i] == s[j]) && (j - i < 3 || palindromeRecord[i+1][j-1]);
+      if (palindromeRecord[i][j] && (j - i + 1) > subStr.length()) {
+	subStr = s.substr(i, j - i + 1);
+      }
+    }
+  }
+  return subStr;
+}
