@@ -528,7 +528,7 @@ int maxProduct(vector<int>& nums) {
     res[0][0] = 0;
     res[0][1] = nums[0]; 
   }
-  for (int i = 1; i < nums.size();  i++) {
+  for (int i = 1; i < nums.size(); i++) {
     if (nums[i] >= 0) {
       res[i][0] = max((double)nums[i], res[i-1][0] * nums[i]); //注意这里最好用max 支持输入是分数的情况，另外就是前一个数res==0的情况
       res[i][1] = min((double)nums[i], res[i-1][1] * nums[i]); //注意这里最好用min
@@ -549,7 +549,7 @@ int maxProduct(vector<int>& nums) {
  * DP NO.006
  * longest-increasing-subsequence 最长递增子序列 [0-1背包类问题]
  * 根据下标递归满足无后效性, if(a[i] > a[i-1]) f(i) = f(i-1) + 1 else f(i) = f(i-1) | f(i) = 0可以计算连续
- * f(i)最终值为之前元素之行上面公式的最大值
+ * f(i)最终值为之前元素执行上面公式的最大值
  * **************************************/
 int lengthOfLIS(vector<int>& nums) {
   if (nums.size() <= 0) {
@@ -648,7 +648,7 @@ int minDistance(string word1, string word2) {
  * DP NO.009
  * edit-distance 两个字符串，最小编辑距离(可增/删/改),上题只能增删不可以改.
  * 状态转移是二维的，主要是因为输入是两个数组
- * 考虑: a[i] == b[j] 的时候编辑距离+0
+ * 考虑: a[i] == b[j] 的时候编辑距离+0 注：回溯从迁往后考虑，dp从后往前考虑：i,j相同删除i,j 不同删除i或j后加i(i-1,j) ...(i,j-1)
  *       a[i] != b[j] 的时候编辑距离可以将a[i]/b[j]删除,或者a[i]前加一个b[j]或者b[j]前加一个a[i]这种对应编辑距离+1 要不是a[i]后移要不是
  *       b[j]后移一位，再或者将a[i]改成b[j]或者b[j]改成a[j]这种a[i] b[j]都后移一位，编辑距离+1
  * f(i,j) = f(i-1, j-1) + 1 if (a[i] == b[j])
