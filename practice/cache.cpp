@@ -36,7 +36,7 @@ public:
     
     void moveToHead(list<Node>::iterator it) {
         Node node = {it->key, it->value};
-        _nodes.erase(it);
+        _cache.erase(it);
         _nodes.push_front(node);
         (*_cache)[node.key] = _nodes.begin();
     }
